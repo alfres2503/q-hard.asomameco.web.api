@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Alfredo\\Desktop\\q-hard\\AsomamecoApi\\src\\src.csproj": {}
+    "D:\\q-hard\\AsomamecoApi\\src\\src.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Alfredo\\Desktop\\q-hard\\AsomamecoApi\\src\\src.csproj": {
+    "D:\\q-hard\\AsomamecoApi\\src\\src.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Alfredo\\Desktop\\q-hard\\AsomamecoApi\\src\\src.csproj",
+        "projectUniqueName": "D:\\q-hard\\AsomamecoApi\\src\\src.csproj",
         "projectName": "src",
-        "projectPath": "C:\\Users\\Alfredo\\Desktop\\q-hard\\AsomamecoApi\\src\\src.csproj",
-        "packagesPath": "C:\\Users\\Alfredo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Alfredo\\Desktop\\q-hard\\AsomamecoApi\\src\\obj\\",
+        "projectPath": "D:\\q-hard\\AsomamecoApi\\src\\src.csproj",
+        "packagesPath": "C:\\Users\\fiofo\\.nuget\\packages\\",
+        "outputPath": "D:\\q-hard\\AsomamecoApi\\src\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Alfredo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\fiofo\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
