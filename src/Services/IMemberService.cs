@@ -1,14 +1,10 @@
 ﻿using src.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace src.Repository
+namespace src.Services
 {
-    public interface IMemberRepository : IDisposable
+    public interface IMemberService
     {
+        Task<IEnumerable<Member>> GetAllAsync();
         IEnumerable<Member> GetAll();
         Member GetByID(int id);
         Member GetByEmail(string email);
