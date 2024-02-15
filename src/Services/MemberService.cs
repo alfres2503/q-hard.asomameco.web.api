@@ -17,25 +17,19 @@ namespace src.Services
             _memberRepository = new MemberRepository(context);
         }
 
-        public async Task<IEnumerable<Member>> GetAllAsync()
+        public async Task<IEnumerable<Member>> GetAll()
         {
-            return await _memberRepository.GetAllAsync();
+            return await _memberRepository.GetAll();
         }
 
-        public IEnumerable<Member> GetAll()
+        public async Task<Member> GetByEmail(string email)
         {
- 
-            return _memberRepository.GetAll();
+            return await _memberRepository.GetByEmail(email);
         }
 
-        public Member GetByEmail(string email)
+        public async Task<Member> GetByID(int id)
         {
-            return _memberRepository.GetByEmail(email);
-        }
-
-        public Member GetByID(int id)
-        {
-            return _memberRepository.GetByID(id);
+            return await _memberRepository.GetByID(id);
         }
         public Member Add(Member member)
         {

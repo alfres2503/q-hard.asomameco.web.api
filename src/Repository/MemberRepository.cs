@@ -14,75 +14,102 @@ namespace src.Repository
         }
 
         // async method to get all members
-        public async Task<IEnumerable<Member>> GetAllAsync()
+        public async Task<IEnumerable<Member>> GetAll()
         {
-            return await _context.Member.ToListAsync();
-        }
-
-        public IEnumerable<Member> GetAll()
-        {
-            IEnumerable<Member> list = null;
             try
             {
-                list = _context.Member
-                    .Include(m => m.Role)
-                    .ToList<Member>();
-
-                return list;
+                return await _context.Member.ToListAsync();
             }
             catch (DbUpdateException dbEx)
             {
-                throw new Exception("Database error: ", dbEx);
+                throw new Exception($"Database error: {dbEx.Message}", dbEx);
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred: ", ex);
+                throw new Exception($"An error occurred: {ex.Message}", ex);
             }
         }
 
-        public Member GetByEmail(string email)
+        public async Task<Member> GetByEmail(string email)
         {
-            Member member = null;
             try
             {
-                member = _context.Member
-                    .Include(m => m.Role)
-                    .Where(m => m.Email == email)
-                    .FirstOrDefault();
+                Member mem = null;
 
-                return member;
+                Member Imember = await _context.Member.FirstOrDefaultAsync(m => m.Email == email);
+                    //.Select(m => new Member
+                    //{
+                    //    Id = m.Id,
+                    //    IdRole = m.IdRole,
+                    //    IdCard = m.IdCard,
+                    //    FirstName = m.FirstName,
+                    //    LastName = m.LastName,
+                    //    Email = m.Email,
+                    //    IsActive = m.IsActive,
+                    //    Role = new Role
+                    //    {
+                    //        Id = m.Role.Id,
+                    //        Description = m.Role.Description
+                    //    }
+                    //})
+
+                if (Imember != null)
+                {
+                    mem = new Member()
+                    {
+                        Id = Imember.Id,
+                        Email = Imember.Email,
+                        FirstName = Imember.FirstName,
+                        LastName = Imember.LastName,
+                        IdRole = Imember.IdRole,
+                        IsActive = Imember.IsActive,
+                    };
+                }
+
+                return mem;
             }
             catch (DbUpdateException dbEx)
             {
-                throw new Exception("Database error: ", dbEx);
+                throw new Exception($"Database error: {dbEx.Message}", dbEx);
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred: ", ex);
+                throw new Exception($"An error occurred: {ex.Message}", ex);
             }
         }
 
-        public Member GetByID(int id)
+        public async Task<Member> GetByID(int id)
         {
-            Member member = null;
             try
             {
-                member = _context.Member
-                    .Include(m => m.Role)
-                    .Where(m => m.Id == id)
-                    .FirstOrDefault();
-
-                return member;
+                return await _context.Member
+                    .Select(m => new Member
+                    {
+                        Id = m.Id,
+                        IdRole = m.IdRole,
+                        IdCard = m.IdCard,
+                        FirstName = m.FirstName,
+                        LastName = m.LastName,
+                        Email = m.Email,
+                        IsActive = m.IsActive,
+                        Role = new Role
+                        {
+                            Id = m.Role.Id,
+                            Description = m.Role.Description
+                        }
+                    })
+                    .FirstOrDefaultAsync(m => m.Id == id);
             }
             catch (DbUpdateException dbEx)
             {
-                throw new Exception("Database error: ", dbEx);
+                throw new Exception($"Database error: {dbEx.Message}", dbEx);
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred: ", ex);
+                throw new Exception($"An error occurred: {ex.Message}", ex);
             }
         }
+
         public Member Add(Member member)
         {
             try
@@ -93,11 +120,11 @@ namespace src.Repository
             }
             catch (DbUpdateException dbEx)
             {
-                throw new Exception("Database error: ", dbEx);
+                throw new Exception($"Database error: {dbEx.Message}", dbEx);
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred: ", ex);
+                throw new Exception($"An error occurred: {ex.Message}", ex);
             }
         }
 
@@ -108,9 +135,9 @@ namespace src.Repository
             {
                 Member member = _context.Member.Find(id);
 
-                if(member == null)
+                if (member == null)
                     return deletedStatus;
-     
+
                 _context.Member.Remove(member);
                 _context.SaveChanges();
 
@@ -122,11 +149,11 @@ namespace src.Repository
             }
             catch (DbUpdateException dbEx)
             {
-                throw new Exception("Database error: ", dbEx);
+                throw new Exception($"Database error: {dbEx.Message}", dbEx);
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred: ", ex);
+                throw new Exception($"An error occurred: {ex.Message}", ex);
             }
         }
 
@@ -140,11 +167,11 @@ namespace src.Repository
             }
             catch (DbUpdateException dbEx)
             {
-                throw new Exception("Database error: ", dbEx);
+                throw new Exception($"Database error: {dbEx.Message}", dbEx);
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred: ", ex);
+                throw new Exception($"An error occurred: {ex.Message}", ex);
             }
         }
 
@@ -167,5 +194,7 @@ namespace src.Repository
             Dispose(true);
             System.GC.SuppressFinalize(this);
         }
+
+        
     }
 }

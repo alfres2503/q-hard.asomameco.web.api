@@ -32,6 +32,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+// Lowercase endpoints
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 var app = builder.Build();

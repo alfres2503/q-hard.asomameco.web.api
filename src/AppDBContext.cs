@@ -9,10 +9,6 @@ namespace src
         {
         }
 
-        public AppDBContext()
-        {
-        }
-
         public DbSet<Member> Member { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<Associate> Associate { get; set; }

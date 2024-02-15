@@ -9,9 +9,9 @@ namespace src.Repository
 {
     public interface IMemberRepository : IDisposable
     {
-        IEnumerable<Member> GetAll();
-        Member GetByID(int id);
-        Member GetByEmail(string email);
+        Task<IEnumerable<Member>> GetAll();
+        Task<Member> GetByID(int id);
+        Task<Member> GetByEmail(string email);
         Member Add(Member member);
         Member Update(Member member);
         bool Delete(int id);
