@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens;
 using src;
+using src.Repository;
+using src.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +15,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention());
 
+// Dependency Injection for Service and Repository
+builder.Services.AddScoped<IMemberService, MemberService>();
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -20,7 +27,7 @@ builder.Services.AddSwaggerGen();
 //Config Token
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
-    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace src.Repository
 {
-    public interface IMemberRepository : IDisposable
+    public interface IMemberRepository 
     {
         Task<IEnumerable<Member>> GetAll();
         Task<Member> GetByID(int id);

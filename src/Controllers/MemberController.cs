@@ -19,10 +19,10 @@ namespace src.Controllers
         public IConfiguration _configuration;
         private readonly IMemberService _memberService;
 
-        public MemberController(AppDBContext context, IConfiguration configuration)
+        public MemberController(IMemberService memberService, IConfiguration configuration)
         {
             _configuration = configuration;
-            _memberService = new MemberService(context);
+            _memberService = memberService;
         }
 
         [HttpGet]

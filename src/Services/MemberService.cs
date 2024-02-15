@@ -5,16 +5,11 @@ namespace src.Services
 {
     public class MemberService : IMemberService
     {
-        private readonly MemberRepository _memberRepository;
+        private readonly IMemberRepository _memberRepository;
 
-        public MemberService(MemberRepository memberRepository)
+        public MemberService(IMemberRepository memberRepository)
         {
             _memberRepository = memberRepository;
-        }
-
-        public MemberService(AppDBContext context)
-        {
-            _memberRepository = new MemberRepository(context);
         }
 
         public async Task<IEnumerable<Member>> GetAll()
