@@ -18,7 +18,23 @@ namespace src.Repository
         {
             try
             {
-                return await _context.Member.ToListAsync();
+                return await _context.Member
+                    .Select(m => new Member
+                    {
+                        Id = m.Id,
+                        IdRole = m.IdRole,
+                        IdCard = m.IdCard,
+                        FirstName = m.FirstName,
+                        LastName = m.LastName,
+                        Email = m.Email,
+                        IsActive = m.IsActive,
+                        Role = new Role
+                        {
+                            Id = m.Role.Id,
+                            Description = m.Role.Description
+                        }
+                    })
+                    .ToListAsync();
             }
             catch (DbUpdateException dbEx)
             {
@@ -54,6 +70,21 @@ namespace src.Repository
             {
                 return await _context.Member
                     .Include(m => m.Role)
+                    .Select(m => new Member
+                    {
+                        Id = m.Id,
+                        IdRole = m.IdRole,
+                        IdCard = m.IdCard,
+                        FirstName = m.FirstName,
+                        LastName = m.LastName,
+                        Email = m.Email,
+                        IsActive = m.IsActive,
+                        Role = new Role
+                        {
+                            Id = m.Role.Id,
+                            Description = m.Role.Description
+                        }
+                    })
                     .FirstOrDefaultAsync(m => m.Id == id);
             }
             catch (DbUpdateException dbEx)
