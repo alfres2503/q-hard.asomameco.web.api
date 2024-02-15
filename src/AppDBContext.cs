@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using src.Models;
+using src.Utils;
 using System.Globalization;
 
 namespace src
@@ -53,10 +54,10 @@ namespace src
                 new Role { Id = 2, Description = "Member" });
 
             modelBuilder.Entity<Member>().HasData(
-                new Member { Id = 1, IdRole = 1, IdCard = "111111111", FirstName = "Fred", LastName = "Suárez", Email = "lusuarezag@est.utn.ac.cr", Password = "123", IsActive = true },
-                new Member { Id = 2, IdRole = 2, IdCard = "222222222", FirstName = "Pala", LastName = "López", Email = "malopezsa@est.utn.ac.cr", Password = "123", IsActive = true },
-                new Member { Id = 3, IdRole = 2, IdCard = "333333333", FirstName = "Gabo", LastName = "Ulate", Email = "gabulatem@est.utn.ac.cr", Password = "123", IsActive = true },
-                new Member { Id = 4, IdRole = 2, IdCard = "444444444", FirstName = "Jorge", LastName = "González", Email = "jgonzalez@mail.com", Password = "123", IsActive = false }
+                new Member { Id = 1, IdRole = 1, IdCard = "111111111", FirstName = "Fred", LastName = "Suárez", Email = "lusuarezag@est.utn.ac.cr", Password = Cryptography.EncryptAES("123"), IsActive = true },
+                new Member { Id = 2, IdRole = 2, IdCard = "222222222", FirstName = "Pala", LastName = "López", Email = "malopezsa@est.utn.ac.cr", Password = Cryptography.EncryptAES("123"), IsActive = true },
+                new Member { Id = 3, IdRole = 2, IdCard = "333333333", FirstName = "Gabo", LastName = "Ulate", Email = "gabulatem@est.utn.ac.cr", Password = Cryptography.EncryptAES("123"), IsActive = true },
+                new Member { Id = 4, IdRole = 2, IdCard = "444444444", FirstName = "Fio", LastName = "Salas", Email = "jgonzalez@mail.com", Password = Cryptography.EncryptAES("123"), IsActive = false }
                 );
 
             modelBuilder.Entity<Event>().HasData(
