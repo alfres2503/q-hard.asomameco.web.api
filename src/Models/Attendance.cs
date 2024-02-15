@@ -6,7 +6,7 @@
         public int IdEvent { get; set; }
         public Associate Associate { get; set; }
         public Event Event { get; set; }
-        public TimeOnly ArrivalTime { get; set; }
+        public TimeOnly? ArrivalTime { get; set; }
         public bool isConfirmed { get; set; }
     }
 }

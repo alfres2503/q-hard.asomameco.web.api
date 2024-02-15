@@ -1,4 +1,6 @@
-﻿namespace src.Models
+﻿using System.Text.Json.Serialization;
+
+namespace src.Models
 {
     public class Member
     {
@@ -12,6 +14,7 @@
         public string Password { get; set; }
         public bool IsActive { get; set; }
         public Role Role { get; set; }
+        [JsonIgnore]
         public List<Event> Events { get; set; }
     }
 }
