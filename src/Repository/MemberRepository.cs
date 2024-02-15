@@ -34,39 +34,9 @@ namespace src.Repository
         {
             try
             {
-                Member mem = null;
-
-                Member Imember = await _context.Member.FirstOrDefaultAsync(m => m.Email == email);
-                    //.Select(m => new Member
-                    //{
-                    //    Id = m.Id,
-                    //    IdRole = m.IdRole,
-                    //    IdCard = m.IdCard,
-                    //    FirstName = m.FirstName,
-                    //    LastName = m.LastName,
-                    //    Email = m.Email,
-                    //    IsActive = m.IsActive,
-                    //    Role = new Role
-                    //    {
-                    //        Id = m.Role.Id,
-                    //        Description = m.Role.Description
-                    //    }
-                    //})
-
-                if (Imember != null)
-                {
-                    mem = new Member()
-                    {
-                        Id = Imember.Id,
-                        Email = Imember.Email,
-                        FirstName = Imember.FirstName,
-                        LastName = Imember.LastName,
-                        IdRole = Imember.IdRole,
-                        IsActive = Imember.IsActive,
-                    };
-                }
-
-                return mem;
+                return await _context.Member
+                    .Include(m => m.Role)
+                    .FirstOrDefaultAsync(m => m.Email == email);
             }
             catch (DbUpdateException dbEx)
             {
@@ -83,21 +53,7 @@ namespace src.Repository
             try
             {
                 return await _context.Member
-                    .Select(m => new Member
-                    {
-                        Id = m.Id,
-                        IdRole = m.IdRole,
-                        IdCard = m.IdCard,
-                        FirstName = m.FirstName,
-                        LastName = m.LastName,
-                        Email = m.Email,
-                        IsActive = m.IsActive,
-                        Role = new Role
-                        {
-                            Id = m.Role.Id,
-                            Description = m.Role.Description
-                        }
-                    })
+                    .Include(m => m.Role)
                     .FirstOrDefaultAsync(m => m.Id == id);
             }
             catch (DbUpdateException dbEx)

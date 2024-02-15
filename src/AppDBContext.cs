@@ -20,8 +20,9 @@ namespace src
             // Crear relación entre tablas
             modelBuilder.Entity<Member>()
                 .HasOne(m => m.Role)
-                .WithMany(r => r.Members)
+                .WithMany()
                 .HasForeignKey(m => m.IdRole);
+
 
             modelBuilder.Entity<Event>()
                 .HasOne(e => e.Member)
