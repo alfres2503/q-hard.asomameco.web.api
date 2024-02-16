@@ -7,7 +7,7 @@ namespace src.Services
         Task<IEnumerable<Member>> GetAll();
         Task<Member> GetByID(int id);
         Task<Member> GetByEmail(string email);
-        Member Add(Member member);
+        Task<Member> Add(Member member);
         Member Update(Member member);
         bool Delete(int id);
     }

@@ -26,7 +26,7 @@ namespace src.Services
         {
             return await _memberRepository.GetByID(id);
         }
-        public Member Add(Member member)
+        public Task<Member> Add(Member member)
         {
             return _memberRepository.Add(member);
         }

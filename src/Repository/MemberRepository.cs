@@ -97,12 +97,12 @@ namespace src.Repository
             }
         }
 
-        public Member Add(Member member)
+        public async Task<Member> Add(Member member)
         {
             try
             {
                 _context.Member.Add(member);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return member;
             }
             catch (DbUpdateException dbEx)
