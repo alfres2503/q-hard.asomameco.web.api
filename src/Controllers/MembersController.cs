@@ -14,11 +14,11 @@ namespace src.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MemberController : ControllerBase
+    public class MembersController : ControllerBase
     {
         private readonly IMemberService _memberService;
 
-        public MemberController(IMemberService memberService)
+        public MembersController(IMemberService memberService)
         {
             _memberService = memberService;
         }
