@@ -9,6 +9,21 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Config Cors
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:3000",
+                                              "http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                      });
+});
+
 // Add services to the container.
 
 // Database Connection
@@ -40,17 +55,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-// Config Cors
-string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-        builder =>
-        {
-            builder.WithOrigins("http://localhost:3000");
-        });
-});
 
 // Lowercase endpoints
 builder.Services.AddRouting(options => options.LowercaseUrls = true);

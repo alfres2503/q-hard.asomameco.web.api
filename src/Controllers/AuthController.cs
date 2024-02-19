@@ -64,7 +64,7 @@ namespace src.Controllers
                     {
                         token = token.Token,
                         expiration = token.Expires,
-                        member_id = member.Id
+                        member
                     }
                 });
             } catch (Exception e)
