@@ -23,12 +23,17 @@ namespace src.Controllers
             _memberService = memberService;
         }
 
+        // 404 is only for when there is no such endpoint or resource, not for when there is no data
+        // 204 is the correct status code for when there is no data 
+        // to return 204, use NoContent() instead of Ok(null)
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
         {
             try
             {
-                return Ok(await _memberService.GetAll());
+                var response = await _memberService.GetAll().ConfigureAwait(false);
+                return response != null ? Ok(response) : NoContent();
             }
             catch (Exception ex)
             {
@@ -37,17 +42,37 @@ namespace src.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Member>> GetMember(int id)
+        public async Task<ActionResult<Member>> GetMemberById(int id)
         {
-            Member member = null;
             try
             {
-                member = await _memberService.GetByID(id);
+                if(id <= 0)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid ID" });
 
+                var response = await _memberService.GetByID(id).ConfigureAwait(false);
+
+                return response != null ? Ok(response) : NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Member>> CreateMember([FromBody] Member member)
+        {
+            try
+            {
                 if (member == null)
-                    return NotFound(new { success = false, status = 404, message = "User not found" });
+                    return BadRequest(new { success = false, status = 400, message = "Invalid member" });
 
-                return Ok(member);
+                if (!ModelState.IsValid)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid member" });
+
+                var response = await _memberService.Create(member).ConfigureAwait(false);
+
+                return CreatedAtRoute(nameof(GetMemberById), new { id = response.Id }, response);
             }
             catch (Exception ex)
             {
