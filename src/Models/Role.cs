@@ -6,7 +6,5 @@ namespace src.Models
     {
         public int Id { get; set; }
         public string Description { get; set; }
-        [JsonIgnore]
-        public ICollection<Member> Members { get; set; }
     }
 }

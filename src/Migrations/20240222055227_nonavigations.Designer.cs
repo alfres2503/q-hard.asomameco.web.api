@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using src;
 
@@ -11,9 +12,11 @@ using src;
 namespace src.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240222055227_nonavigations")]
+    partial class nonavigations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -389,14 +392,14 @@ namespace src.Migrations
             modelBuilder.Entity("src.Models.Attendance", b =>
                 {
                     b.HasOne("src.Models.Associate", "Associate")
-                        .WithMany()
+                        .WithMany("Attendances")
                         .HasForeignKey("IdAssociate")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_attendance_associate_id_associate");
 
                     b.HasOne("src.Models.Event", "Event")
-                        .WithMany()
+                        .WithMany("Attendances")
                         .HasForeignKey("IdEvent")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -410,7 +413,7 @@ namespace src.Migrations
             modelBuilder.Entity("src.Models.Event", b =>
                 {
                     b.HasOne("src.Models.Member", "Member")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("IdMember")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -422,13 +425,33 @@ namespace src.Migrations
             modelBuilder.Entity("src.Models.Member", b =>
                 {
                     b.HasOne("src.Models.Role", "Role")
-                        .WithMany()
+                        .WithMany("Members")
                         .HasForeignKey("IdRole")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_member_role_id_role");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("src.Models.Associate", b =>
+                {
+                    b.Navigation("Attendances");
+                });
+
+            modelBuilder.Entity("src.Models.Event", b =>
+                {
+                    b.Navigation("Attendances");
+                });
+
+            modelBuilder.Entity("src.Models.Member", b =>
+                {
+                    b.Navigation("Events");
+                });
+
+            modelBuilder.Entity("src.Models.Role", b =>
+                {
+                    b.Navigation("Members");
                 });
 #pragma warning restore 612, 618
         }

@@ -14,7 +14,5 @@ namespace src.Models
         public string Password { get; set; }
         public bool IsActive { get; set; }
         public Role Role { get; set; }
-        [JsonIgnore]
-        public List<Event> Events { get; set; }
     }
 }

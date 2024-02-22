@@ -10,9 +10,6 @@ namespace src.Models
         public bool IsActive { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        [JsonIgnore]
-        public List<Attendance> Attendances { get; set; }
-        [JsonIgnore]
-        public List<Event> Events { get; set; }
+
     }
 }

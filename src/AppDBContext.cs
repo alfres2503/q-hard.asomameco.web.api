@@ -29,22 +29,28 @@ namespace src
             // Relation between Member and Role
             modelBuilder.Entity<Member>()
                 .HasOne(m => m.Role)
-                .WithMany(r => r.Members)
+                .WithMany()
                 .HasForeignKey(m => m.IdRole);
 
             // Relation between Event and Member
             modelBuilder.Entity<Event>()
                 .HasOne(e => e.Member)
-                .WithMany(m => m.Events)
+                .WithMany()
                 .HasForeignKey(e => e.IdMember);
 
             // Many to many relation between Associate and Event using Attendance as intermediate table
-            modelBuilder.Entity<Associate>()
-                .HasMany(a => a.Events)
-                .WithMany(e => e.Associates)
-                .UsingEntity<Attendance>(
-                    l => l.HasOne<Event>(e => e.Event).WithMany(e => e.Attendances).HasForeignKey(e => e.IdEvent),
-                    r => r.HasOne<Associate>(e => e.Associate).WithMany(e => e.Attendances).HasForeignKey(e => e.IdAssociate));
+            modelBuilder.Entity<Attendance>()
+                .HasKey(a => new { a.IdAssociate, a.IdEvent });
+
+            modelBuilder.Entity<Attendance>()
+                .HasOne(a => a.Associate)
+                .WithMany()
+                .HasForeignKey(a => a.IdAssociate);
+
+            modelBuilder.Entity<Attendance>()
+                .HasOne(a => a.Event)
+                .WithMany()
+                .HasForeignKey(a => a.IdEvent);
         }
 
         private void SeedData(ModelBuilder modelBuilder)
@@ -67,7 +73,7 @@ namespace src
                 );
 
             modelBuilder.Entity<Associate>().HasData(
-                new Associate { Id = 1 ,IdCard = "555555555", Name = "Luis Gallego", Email = "luis@mail.com", IsActive = true, Phone = "88888888" },
+                new Associate { Id = 1, IdCard = "555555555", Name = "Luis Gallego", Email = "luis@mail.com", IsActive = true, Phone = "88888888" },
                 new Associate { Id = 2, IdCard = "666666666", Name = "Mario Gallego", Email = "mario@mail.com", IsActive = true, Phone = "77777777" },
                 new Associate { Id = 3, IdCard = "777777777", Name = "Pedro Fernández", Email = "pfer@mail.com", IsActive = true, Phone = "66666666" }
                 );
