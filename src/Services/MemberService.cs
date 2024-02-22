@@ -14,31 +14,31 @@ namespace src.Services
 
         public async Task<IEnumerable<Member>> GetAll()
         {
-            return await _memberRepository.GetAll();
+            return await _memberRepository.GetAll().ConfigureAwait(false);
         }
 
         public async Task<Member> GetByEmail(string email)
         {
-            return await _memberRepository.GetByEmail(email);
+            return await _memberRepository.GetByEmail(email).ConfigureAwait(false);
         }
 
         public async Task<Member> GetByID(int id)
         {
-            return await _memberRepository.GetByID(id);
+            return await _memberRepository.GetByID(id).ConfigureAwait(false);
         }
-        public Task<Member> Add(Member member)
+        public async Task<Member> Create(Member member)
         {
-            return _memberRepository.Add(member);
-        }
-
-        public Member Update(Member member)
-        {
-            return _memberRepository.Update(member);
+            return await _memberRepository.Create(member).ConfigureAwait(false);
         }
 
-        public bool Delete(int id)
+        public async Task<Member> Update(Member member)
         {
-            return _memberRepository.Delete(id);
+            return await _memberRepository.Update(member);
+        }
+
+        public async Task<bool> Delete(int id)
+        {
+            return await _memberRepository.Delete(id);
         }
 
     }

@@ -12,8 +12,8 @@ namespace src.Repository
         Task<IEnumerable<Member>> GetAll();
         Task<Member> GetByID(int id);
         Task<Member> GetByEmail(string email);
-        Task<Member> Add(Member member);
-        Member Update(Member member);
-        bool Delete(int id);
+        Task<Member> Create(Member member);
+        Task<Member> Update(Member member);
+        Task<bool> Delete(int id);
     }
 }
