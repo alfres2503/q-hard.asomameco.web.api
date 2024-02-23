@@ -32,9 +32,9 @@ namespace test.Controllers
         public async Task GetAll_ShouldReturnOkResponse_WhenDataFound()
         {
             // Arrange
-            var membersMock = _fixture.CreateMany<Member>(3).ToList();
+            var membersMock = _fixture.CreateMany<Member>(50).ToList();
 
-            _serviceMock.Setup(service => service.GetAll()).ReturnsAsync(membersMock);
+            _serviceMock.Setup(service => service.GetAll(1, 10)).ReturnsAsync(membersMock);
 
             // Act
             var result = await _controller.GetMembers().ConfigureAwait(false);
@@ -47,14 +47,14 @@ namespace test.Controllers
                 .Should()
                 .NotBeNull()
                 .And.BeOfType(membersMock.GetType());
-            _serviceMock.Verify(service => service.GetAll(), Times.Once);
+            _serviceMock.Verify(service => service.GetAll(1, 10), Times.Once);
         }
 
         [Fact]
         public async Task GetAll_ShouldReturnNoContent_WhenNoDataFound()
         {
             // Arrange
-            _serviceMock.Setup(service => service.GetAll()).ReturnsAsync((List<Member>)null);
+            _serviceMock.Setup(service => service.GetAll(1, 10)).ReturnsAsync((List<Member>)null);
 
             // Act
             var result = await _controller.GetMembers().ConfigureAwait(false);
@@ -62,7 +62,7 @@ namespace test.Controllers
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<NoContentResult>();
-            _serviceMock.Verify(service => service.GetAll(), Times.Once);
+            _serviceMock.Verify(service => service.GetAll(1, 10), Times.Once);
         }
 
 
@@ -70,7 +70,7 @@ namespace test.Controllers
         public async Task GetAll_ShouldReturnInternalServerError_WhenExceptionThrown()
         {
             // Arrange
-            _serviceMock.Setup(service => service.GetAll()).ThrowsAsync(new Exception("Some error"));
+            _serviceMock.Setup(service => service.GetAll(1, 10)).ThrowsAsync(new Exception("Some error"));
 
             // Act
             var result = await _controller.GetMembers().ConfigureAwait(false);
@@ -79,7 +79,7 @@ namespace test.Controllers
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<ObjectResult>();
             result.Result.As<ObjectResult>().StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
-            _serviceMock.Verify(service => service.GetAll(), Times.Once);
+            _serviceMock.Verify(service => service.GetAll(1, 10), Times.Once);
         }
 
         // Test Get By ID
