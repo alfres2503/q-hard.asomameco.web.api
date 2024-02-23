@@ -28,11 +28,11 @@ namespace src.Controllers
         // to return 204, use NoContent() instead of Ok(null)
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
+        public async Task<ActionResult<IEnumerable<Member>>> GetMembers(int pageNumber = 1, int pageSize = 10)
         {
             try
             {
-                var response = await _memberService.GetAll().ConfigureAwait(false);
+                var response = await _memberService.GetAll(pageNumber, pageSize).ConfigureAwait(false);
                 return response != null ? Ok(response) : NoContent();
             }
             catch (Exception ex)

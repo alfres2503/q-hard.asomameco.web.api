@@ -14,11 +14,14 @@ namespace src.Repository
         }
 
         // async method to get all members
-        public async Task<IEnumerable<Member>> GetAll()
+        public async Task<IEnumerable<Member>> GetAll(int pageNumber, int pageSize)
         {
             try
             {
                 return await _context.Member
+                    .OrderBy(m => m.Id)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
                     .Select(m => new Member
                     {
                         Id = m.Id,

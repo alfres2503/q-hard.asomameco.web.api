@@ -12,9 +12,9 @@ namespace src.Services
             _memberRepository = memberRepository;
         }
 
-        public async Task<IEnumerable<Member>> GetAll()
+        public async Task<IEnumerable<Member>> GetAll(int pageNumber, int pageSize)
         {
-            return await _memberRepository.GetAll().ConfigureAwait(false);
+            return await _memberRepository.GetAll(pageNumber,pageSize).ConfigureAwait(false);
         }
 
         public async Task<Member> GetByEmail(string email)
