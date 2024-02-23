@@ -31,11 +31,7 @@ namespace src.Repository
                         LastName = m.LastName,
                         Email = m.Email,
                         IsActive = m.IsActive,
-                        Role = new Role
-                        {
-                            Id = m.Role.Id,
-                            Description = m.Role.Description
-                        }
+                        Role = m.Role
                     })
                     .ToListAsync();
             }
@@ -82,11 +78,7 @@ namespace src.Repository
                         LastName = m.LastName,
                         Email = m.Email,
                         IsActive = m.IsActive,
-                        Role = new Role
-                        {
-                            Id = m.Role.Id,
-                            Description = m.Role.Description
-                        }
+                        Role = m.Role
                     })
                     .FirstOrDefaultAsync(m => m.Id == id);
             }
