@@ -21,6 +21,6 @@ namespace src.Models
         public string Password { get; set; }
         [Required]
         public bool IsActive { get; set; }
-        public Role Role { get; set; }
+        public Role? Role { get; set; }
     }
 }

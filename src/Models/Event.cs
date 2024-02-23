@@ -9,7 +9,7 @@ namespace src.Models
         public int Id { get; set; }
         [Required]
         public int IdMember { get; set; }
-        public Member Member { get; set; }
+        public Member? Member { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

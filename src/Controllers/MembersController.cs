@@ -72,7 +72,7 @@ namespace src.Controllers
 
                 var response = await _memberService.Create(member).ConfigureAwait(false);
 
-                return CreatedAtRoute(nameof(GetMemberById), new { id = response.Id }, response);
+                return CreatedAtAction(nameof(GetMemberById), new { id = response.Id }, response);
             }
             catch (Exception ex)
             {
