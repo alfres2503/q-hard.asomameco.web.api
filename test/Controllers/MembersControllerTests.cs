@@ -185,7 +185,7 @@ namespace test.Controllers
             // Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<ActionResult<Member>>();
-            result.Result.Should().BeOfType<CreatedAtRouteResult>();
+            result.Result.Should().BeOfType<CreatedAtActionResult>();
 
             _serviceMock.Verify(service => service.Create(request), Times.Once);    
         }
