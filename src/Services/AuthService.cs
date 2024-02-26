@@ -7,9 +7,8 @@ namespace src.Services
     {
         public IMemberService _memberService;
 
-        public AuthService(IMemberService memberService)
+        public AuthService()
         {
-            _memberService = memberService;
         }
 
         public async Task<bool> Authenticate(Member pMember, string password)

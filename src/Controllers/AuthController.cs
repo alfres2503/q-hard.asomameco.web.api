@@ -34,6 +34,7 @@ namespace src.Controllers
             {
                 var credentials = JsonConvert.DeserializeObject<dynamic>(requestBody.ToString());
 
+
                 string email = credentials.email;
                 string password = credentials.password;
 
@@ -60,12 +61,20 @@ namespace src.Controllers
                     success = true,
                     status = 200,
                     message = "Login successful",
-                    data = new
+                    token = token.Token,
+                    expiration = token.Expires,
+                    member = new
                     {
-                        token = token.Token,
-                        expiration = token.Expires,
-                        member
+                        Id = member.Id,
+                        IdRole = member.IdRole,
+                        IdCard = member.IdCard,
+                        FirstName = member.FirstName,
+                        LastName = member.LastName,
+                        Email = member.Email,
+                        IsActive = member.IsActive,
+                        Role = member.Role
                     }
+                    
                 });
             } catch (Exception e)
             {
