@@ -65,14 +65,14 @@ namespace src.Controllers
                     expiration = token.Expires,
                     member = new
                     {
-                        Id = member.Id,
-                        IdRole = member.IdRole,
-                        IdCard = member.IdCard,
-                        FirstName = member.FirstName,
-                        LastName = member.LastName,
-                        Email = member.Email,
-                        IsActive = member.IsActive,
-                        Role = member.Role
+                        id = member.Id,
+                        idRole = member.IdRole,
+                        idCard = member.IdCard,
+                        firstName = member.FirstName,
+                        lastName = member.LastName,
+                        email = member.Email,
+                        isActive = member.IsActive,
+                        role = member.Role
                     }
                     
                 });
