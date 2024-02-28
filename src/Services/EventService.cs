@@ -7,7 +7,7 @@ namespace src.Services
     {
         private readonly IEventRepository _eventRepository;
 
-        public  EventService(IEventRepository eventRepository)
+        public EventService(IEventRepository eventRepository)
         {
             _eventRepository = eventRepository;
         }
