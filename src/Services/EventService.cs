@@ -1,32 +1,60 @@
 ﻿using src.Models;
+using src.Repository;
 
 namespace src.Services
 {
     public class EventService : IEventService
     {
-        public Task<Event> Create(Event _event)
+        private readonly IEventRepository _eventRepository;
+
+        public  EventService(IEventRepository eventRepository)
         {
-            throw new NotImplementedException();
+            _eventRepository = eventRepository;
         }
 
-        public Task<bool> Delete(int id)
+        public async Task<Event> Create(Event _event)
         {
-            throw new NotImplementedException();
+            try { return await _eventRepository.Create(_event).ConfigureAwait(false); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
         }
 
-        public Task<IEnumerable<Event>> GetAll(int pageNumber, int pageSize)
+        public async Task<bool> Delete(int id)
         {
-            throw new NotImplementedException();
+            try { return await _eventRepository.Delete(id); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
         }
 
-        public Task<Event> GetByID(int id)
+        public async Task<IEnumerable<Event>> GetAll(int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            try { return await _eventRepository.GetAll(pageNumber, pageSize).ConfigureAwait(false); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
         }
 
-        public Task<Event> Update(Event _event)
+        public async Task<Event> GetByID(int id)
         {
-            throw new NotImplementedException();
+            try { return await _eventRepository.GetByID(id).ConfigureAwait(false); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<Event> Update(Event _event)
+        {
+            try { return await _eventRepository.Update(_event); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
         }
     }
 }
