@@ -1,32 +1,78 @@
 ﻿using src.Models;
+using src.Repository;
+using System.Data;
 
 namespace src.Services
 {
     public class RoleService : IRoleService
     {
-        public Task<Role> Create(Role role)
+        private readonly IRoleRepository _roleRepository;
+
+        public RoleService(IRoleRepository roleRepository)
         {
-            throw new NotImplementedException();
+            _roleRepository = roleRepository;
         }
 
-        public Task<bool> Delete(int id)
+        public async Task<Role> Create(Role role)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _roleRepository.Create(role).ConfigureAwait(false);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
         }
 
-        public Task<IEnumerable<Role>> GetAll(int pageNumber, int pageSize)
+        public async Task<bool> Delete(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _roleRepository.Delete(id);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
         }
 
-        public Task<Role> GetByID(int id)
+        public async Task<IEnumerable<Role>> GetAll(int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _roleRepository.GetAll(pageNumber, pageSize).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
         }
 
-        public Task<Role> Update(Role role)
+        public async Task<Role> GetByID(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _roleRepository.GetByID(id).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<Role> Update(Role role)
+        {
+            try
+            {
+                return await _roleRepository.Update(role);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
         }
     }
 }
