@@ -66,5 +66,14 @@ namespace src.Services
             }
         }
 
+        public async Task<Member> ChangeState(int id)
+        {
+            try { return await _memberRepository.ChangeState(id); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
     }
 }

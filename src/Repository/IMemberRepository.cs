@@ -14,6 +14,7 @@ namespace src.Repository
         Task<Member> GetByEmail(string email);
         Task<Member> Create(Member member);
         Task<Member> Update(Member member);
+        Task<Member> ChangeState(int id);
         Task<bool> Delete(int id);
     }
 }

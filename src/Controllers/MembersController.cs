@@ -1,14 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
 using src.Models;
 using src.Services;
-using src.Utils;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace src.Controllers
 {
@@ -46,7 +38,7 @@ namespace src.Controllers
         {
             try
             {
-                if(id <= 0)
+                if (id <= 0)
                     return BadRequest(new { success = false, status = 400, message = "Invalid ID" });
 
                 var response = await _memberService.GetByID(id).ConfigureAwait(false);
@@ -72,12 +64,53 @@ namespace src.Controllers
 
                 var response = await _memberService.Create(member).ConfigureAwait(false);
 
-                return CreatedAtAction(nameof(GetMemberById), new { id = response.Id }, response);
+                return response != null ? CreatedAtAction(nameof(GetMemberById), new { id = response.Id }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to create member");
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpPut]
+        public async Task<ActionResult<Member>> UpdateMember([FromBody] Member _member)
+        {
+            try
+            {
+                if (_member == null)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid member" });
+
+                if (!ModelState.IsValid)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid member" });
+
+                var response = await _memberService.Update(_member).ConfigureAwait(false);
+
+                return response != null ? AcceptedAtAction(nameof(GetMemberById), new { id = response.Id }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to update member");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+
+        [HttpPut("state/{id}")]
+        public async Task<ActionResult<Member>> ChangeState(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid ID" });
+
+                var response = await _memberService.ChangeState(id).ConfigureAwait(false);
+
+                return response != null ? AcceptedAtAction(nameof(GetMemberById), new { id = response.Id }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to change state");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
     }
 }
