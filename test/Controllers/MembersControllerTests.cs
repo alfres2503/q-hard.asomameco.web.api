@@ -237,5 +237,141 @@ namespace test.Controllers
             result.Result.As<ObjectResult>().StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
             _serviceMock.Verify(service => service.Create(request), Times.Once);
         }
+
+        // Test Update
+        [Fact]
+        public async Task Update_ShouldReturnAcceptedAtAction_WhenValidInput()
+        {
+            // Arrange
+            var request = _fixture.Create<Member>();
+            var response = _fixture.Create<Member>();
+            _serviceMock.Setup(service => service.Update(request)).ReturnsAsync(response);
+
+            // Act
+            var result = await _controller.UpdateMember(request).ConfigureAwait(false);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeAssignableTo<ActionResult<Member>>();
+            result.Result.Should().BeOfType<AcceptedAtActionResult>();
+
+            _serviceMock.Verify(service => service.Update(request), Times.Once);
+        }
+
+        [Fact]
+        public async Task Update_ShouldReturnBadRequest_WhenModelStateIsInvalid()
+        {
+            // Arrange
+            var request = _fixture.Create<Member>();
+            _controller.ModelState.AddModelError("Name", "Name is required");
+
+            // Act
+            var result = await _controller.UpdateMember(request).ConfigureAwait(false);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Result.Should().BeOfType<BadRequestObjectResult>();
+            _serviceMock.Verify(service => service.Update(request), Times.Never);
+        }
+
+        [Fact]
+        public async Task Update_ShouldReturnBadRequest_WhenInputIsNull()
+        {
+            // Arrange
+            Member request = null;
+
+            // Act
+            var result = await _controller.UpdateMember(request).ConfigureAwait(false);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Result.Should().BeOfType<BadRequestObjectResult>();
+            _serviceMock.Verify(service => service.Update(request), Times.Never);
+        }
+
+        [Fact]
+        public async Task Update_ShouldReturnInternalServerError_WhenExceptionThrown()
+        {
+            // Arrange
+            var request = _fixture.Create<Member>();
+            _serviceMock.Setup(service => service.Update(request)).ThrowsAsync(new Exception("Some error"));
+
+            // Act
+            var result = await _controller.UpdateMember(request).ConfigureAwait(false);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Result.Should().BeOfType<ObjectResult>();
+            result.Result.As<ObjectResult>().StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+            _serviceMock.Verify(service => service.Update(request), Times.Once);
+        }
+
+        // Test Change State
+        [Fact]
+        public async Task ChangeState_ShouldReturnAcceptedAtAction_WhenValidInput()
+        {
+            // Arrange
+            var id = _fixture.Create<int>();
+            var response = _fixture.Create<Member>();
+            _serviceMock.Setup(service => service.ChangeState(id)).ReturnsAsync(response);
+
+            // Act
+            var result = await _controller.ChangeState(id).ConfigureAwait(false);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeAssignableTo<ActionResult<Member>>();
+            result.Result.Should().BeOfType<AcceptedAtActionResult>();
+
+            _serviceMock.Verify(service => service.ChangeState(id), Times.Once);
+        }
+
+        [Fact]
+        public async Task ChangeState_ShouldReturnBadRequest_WhenInputIsZero()
+        {
+            // Arrange
+            var id = 0;
+
+            // Act
+            var result = await _controller.ChangeState(id).ConfigureAwait(false);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Result.Should().BeOfType<BadRequestObjectResult>();
+            _serviceMock.Verify(service => service.ChangeState(id), Times.Never);
+        }
+
+        [Fact]
+        public async Task ChangeState_ShouldReturnBadRequest_WhenInputIsLessThanZero()
+        {
+            // Arrange
+            var id = -1;
+
+            // Act
+            var result = await _controller.ChangeState(id).ConfigureAwait(false);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Result.Should().BeOfType<BadRequestObjectResult>();
+            _serviceMock.Verify(service => service.ChangeState(id), Times.Never);
+        }
+
+        [Fact]
+        public async Task ChangeState_ShouldReturnInternalServerError_WhenExceptionThrown()
+        {
+            // Arrange
+            var id = _fixture.Create<int>();
+            _serviceMock.Setup(service => service.ChangeState(id)).ThrowsAsync(new Exception("Some error"));
+
+            // Act
+            var result = await _controller.ChangeState(id).ConfigureAwait(false);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Result.Should().BeOfType<ObjectResult>();
+            result.Result.As<ObjectResult>().StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+            _serviceMock.Verify(service => service.ChangeState(id), Times.Once);
+        }
+
     }
 }
