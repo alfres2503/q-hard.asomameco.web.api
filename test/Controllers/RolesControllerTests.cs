@@ -19,13 +19,13 @@ namespace test.Controllers
     {
         private readonly IFixture _fixture;
         private readonly Mock<IRoleService> _serviceMock;
-        private readonly RoleController _controller;
+        private readonly RolesController _controller;
 
         public RolesControllerTests()
         {
             _fixture = new Fixture();
             _serviceMock = _fixture.Freeze<Mock<IRoleService>>();
-            _controller = new RoleController(_serviceMock.Object);
+            _controller = new RolesController(_serviceMock.Object);
         }
 
         // Test Get All
