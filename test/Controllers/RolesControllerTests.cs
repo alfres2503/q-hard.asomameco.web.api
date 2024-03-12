@@ -46,7 +46,7 @@ namespace test.Controllers
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeAssignableTo<ActionResult<IEnumerable<Event>>>();
+            result.Should().BeAssignableTo<ActionResult<IEnumerable<Role>>>();
             result.Result.Should().BeOfType<OkObjectResult>();
             result.Result.As<OkObjectResult>().Value
                 .Should()
@@ -104,7 +104,7 @@ namespace test.Controllers
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeAssignableTo<ActionResult<Event>>();
+            result.Should().BeAssignableTo<ActionResult<Role>>();
             result.Result.Should().BeOfType<OkObjectResult>();
             result.Result.As<OkObjectResult>().Value
                 .Should()
@@ -199,7 +199,7 @@ namespace test.Controllers
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeAssignableTo<ActionResult<Event>>();
+            result.Should().BeAssignableTo<ActionResult<Role>>();
             result.Result.Should().BeOfType<CreatedAtActionResult>();
 
             _serviceMock.Verify(service => service.Create(request), Times.Once);
