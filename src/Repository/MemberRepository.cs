@@ -45,6 +45,22 @@ namespace src.Repository
             }
         }
 
+        public async Task<int> GetCount()
+        {
+            try
+            {
+                return await _context.Member.CountAsync();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new Exception($"Database error: {dbEx.Message}", dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
         public async Task<Member> GetByEmail(string email)
         {
             try

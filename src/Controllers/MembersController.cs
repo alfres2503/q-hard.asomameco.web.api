@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using src.Models;
 using src.Services;
+using src.Utils;
 
 namespace src.Controllers
 {
@@ -20,12 +21,26 @@ namespace src.Controllers
         // to return 204, use NoContent() instead of Ok(null)
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Member>>> GetMembers(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedResult<Member>>> GetMembers(int pageNumber = 1, int pageSize = 10)
         {
             try
             {
-                var response = await _memberService.GetAll(pageNumber, pageSize).ConfigureAwait(false);
-                return response != null ? Ok(response) : NoContent();
+                var list = await _memberService.GetAll(pageNumber, pageSize).ConfigureAwait(false);
+
+                if(list == null)
+                    return NoContent();
+
+                var total = await _memberService.GetCount().ConfigureAwait(false);
+                var totalPages = (int)Math.Ceiling((double)total / (double)pageSize);
+
+                var result = new PagedResult<Member>
+                {
+                    List = list,
+                    TotalPages = totalPages,
+                    TotalRecords = total
+                };
+
+                return Ok(result);
             }
             catch (Exception ex)
             {

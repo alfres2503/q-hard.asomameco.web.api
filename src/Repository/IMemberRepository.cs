@@ -10,6 +10,7 @@ namespace src.Repository
     public interface IMemberRepository 
     {
         Task<IEnumerable<Member>> GetAll(int pageNumber, int pageSize);
+        Task<int> GetCount();
         Task<Member> GetByID(int id);
         Task<Member> GetByEmail(string email);
         Task<Member> Create(Member member);
