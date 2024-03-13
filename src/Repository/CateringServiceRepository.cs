@@ -25,6 +25,7 @@ namespace src.Repository
                     .Select(cs => new CateringService
                     {
                         Id = cs.Id,
+                        Name = cs.Name,
                         Email = cs.Email,
                         Phone = cs.Phone,
                         IsActive = cs.IsActive,
@@ -82,6 +83,7 @@ namespace src.Repository
                     .Select(cs => new CateringService
                     {
                         Id = cs.Id,
+                        Name = cs.Name,
                         Email = cs.Email,
                         Phone = cs.Phone,
                         IsActive = cs.IsActive,
