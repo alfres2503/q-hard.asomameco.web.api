@@ -6,6 +6,7 @@ using Moq;
 using src.Controllers;
 using src.Models;
 using src.Services;
+using src.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,12 +42,12 @@ namespace test.Controllers
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeAssignableTo<ActionResult<IEnumerable<Member>>>();
+            result.Should().BeAssignableTo<ActionResult<PagedResult<Member>>>();
             result.Result.Should().BeOfType<OkObjectResult>();
             result.Result.As<OkObjectResult>().Value
                 .Should()
-                .NotBeNull()
-                .And.BeOfType(membersMock.GetType());
+                .NotBeNull();
+              
             _serviceMock.Verify(service => service.GetAll(1, 10), Times.Once);
         }
 

@@ -56,6 +56,23 @@ namespace test.Services
             _repositoryMock.Verify(repo => repo.GetAll(1, 10), Times.Once);
         }
 
+        // Test Get Total
+        [Fact]
+        public async Task GetTotal_ShouldReturnData_WhenDataFound()
+        {
+            // Arrange
+            var membersMock = _fixture.CreateMany<Member>(50).ToList();
+
+            _repositoryMock.Setup(repo => repo.GetCount()).ReturnsAsync(membersMock.Count);
+
+            // Act
+            var result = await _service.GetCount().ConfigureAwait(false);
+
+            // Assert
+            result.Should().Be(50); // 50
+            _repositoryMock.Verify(repo => repo.GetCount(), Times.Once);
+        }
+
         // Test Get By Email
         [Fact]
         public async Task GetByEmail_ShouldReturnData_WhenDataFound()
