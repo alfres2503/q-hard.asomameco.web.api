@@ -20,5 +20,8 @@ namespace src.Models
         public TimeOnly Time { get; set; }
         [Required]
         public string Place { get; set; }
+        [Required]
+        public int IdCateringService { get; set; }
+        public CateringService? CateringService { get; set; }
     }
 }

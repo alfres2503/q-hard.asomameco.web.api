@@ -80,7 +80,8 @@ namespace src.Repository
                         Description = e.Description,
                         Date = e.Date,
                         Place = e.Place,
-                        Time = e.Time
+                        Time = e.Time,
+                        IdCateringService = e.IdCateringService,
                     })
                     .ToListAsync();
             }
@@ -108,7 +109,8 @@ namespace src.Repository
                         Description = e.Description,
                         Date = e.Date,
                         Place = e.Place,
-                        Time = e.Time
+                        Time = e.Time,
+                        IdCateringService = e.IdCateringService,
                     })
                     .FirstOrDefaultAsync(e => e.Id == id);
             }
