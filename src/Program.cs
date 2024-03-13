@@ -37,6 +37,8 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<ICateringServiceService, CateringServiceService>();
+builder.Services.AddScoped<ICateringServiceRepository, CateringServiceRepository>();
 
 
 builder.Services.AddControllers();
