@@ -39,6 +39,10 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<ICateringServiceService, CateringServiceService>();
 builder.Services.AddScoped<ICateringServiceRepository, CateringServiceRepository>();
+builder.Services.AddScoped<IAssociateService, AssociateService>();
+builder.Services.AddScoped<IAssociateRepository, AssociateRepository>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 
 
 builder.Services.AddControllers();
