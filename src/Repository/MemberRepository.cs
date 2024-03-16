@@ -14,12 +14,56 @@ namespace src.Repository
         }
 
         // async method to get all members
-        public async Task<IEnumerable<Member>> GetAll(int pageNumber, int pageSize)
+        public async Task<IEnumerable<Member>> GetAll(int pageNumber, int pageSize, string searchTerm, string orderBy)
         {
             try
             {
-                return await _context.Member
-                    .OrderBy(m => m.Id)
+                var query = _context.Member.AsQueryable();
+
+                // if there is a search term, filter the query
+                if (!string.IsNullOrEmpty(searchTerm))
+                    query = query.Where(m => m.FirstName.Contains(searchTerm) || m.LastName.Contains(searchTerm) || m.Email.Contains(searchTerm));
+
+                // if there is an orderBy parameter, order the query
+                switch (orderBy)
+                {
+                    case "id":
+                        query = query.OrderBy(m => m.Id);
+                        break;
+                    case "id_desc":
+                        query = query.OrderByDescending(m => m.Id);
+                        break;
+                    case "name":
+                        query = query.OrderBy(m => m.FirstName).ThenBy(m => m.LastName);
+                        break;
+                    case "name_desc":
+                        query = query.OrderByDescending(m => m.FirstName).ThenByDescending(m => m.LastName);
+                        break;
+                    case "email":
+                        query = query.OrderBy(m => m.Email);
+                        break;
+                    case "email_desc":
+                        query = query.OrderByDescending(m => m.Email);
+                        break;
+                    case "role":
+                        query = query.OrderBy(m => m.IdRole);
+                        break;
+                    case "role_desc":
+                        query = query.OrderByDescending(m => m.IdRole);
+                        break;
+                    case "active":
+                        query = query.OrderBy(m => m.IsActive);
+                        break;
+                    case "active_desc":
+                        query = query.OrderByDescending(m => m.IsActive);
+                        break;
+                    default:
+                        query = query.OrderBy(m => m.Id);
+                        break;
+                }
+                
+
+                return await query
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .Select(m => new Member

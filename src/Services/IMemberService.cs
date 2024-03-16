@@ -4,7 +4,7 @@ namespace src.Services
 {
     public interface IMemberService
     {
-        Task<IEnumerable<Member>> GetAll(int pageNumber, int pageSize);
+        Task<IEnumerable<Member>> GetAll(int pageNumber, int pageSize, string searchTerm, string orderBy);
         Task<int> GetCount();
         Task<Member> GetByID(int id);
         Task<Member> GetByEmail(string email);

@@ -12,9 +12,9 @@ namespace src.Services
             _memberRepository = memberRepository;
         }
 
-        public async Task<IEnumerable<Member>> GetAll(int pageNumber, int pageSize)
+        public async Task<IEnumerable<Member>> GetAll(int pageNumber, int pageSize, string searchTerm, string orderBy)
         {
-            try { return await _memberRepository.GetAll(pageNumber, pageSize).ConfigureAwait(false); }
+            try { return await _memberRepository.GetAll(pageNumber, pageSize, searchTerm, orderBy).ConfigureAwait(false); }
             catch (Exception ex)
             {
                 throw new Exception($"An error occurred: {ex.Message}", ex);

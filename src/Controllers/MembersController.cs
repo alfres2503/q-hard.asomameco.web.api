@@ -21,11 +21,11 @@ namespace src.Controllers
         // to return 204, use NoContent() instead of Ok(null)
 
         [HttpGet]
-        public async Task<ActionResult<PagedResult<Member>>> GetMembers(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedResult<Member>>> GetMembers(int pageNumber = 1, int pageSize = 10, string searchTerm = null, string orderBy = null)
         {
             try
             {
-                var list = await _memberService.GetAll(pageNumber, pageSize).ConfigureAwait(false);
+                var list = await _memberService.GetAll(pageNumber, pageSize, searchTerm, orderBy).ConfigureAwait(false);
 
                 if(list == null)
                     return NoContent();
