@@ -28,32 +28,32 @@ namespace test.Services
             // Arrange
             var membersMock = _fixture.CreateMany<Member>(50).ToList();
 
-            _repositoryMock.Setup(repo => repo.GetAll(1, 10)).ReturnsAsync(membersMock);
+            _repositoryMock.Setup(repo => repo.GetAll(1, 10, null, null)).ReturnsAsync(membersMock);
 
             // Act
-            var result = await _service.GetAll(1, 10).ConfigureAwait(false);
+            var result = await _service.GetAll(1, 10, null, null).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<IEnumerable<Member>>();
             result.Should().BeEquivalentTo(membersMock);
-            _repositoryMock.Verify(repo => repo.GetAll(1, 10), Times.Once);
+            _repositoryMock.Verify(repo => repo.GetAll(1, 10, null, null), Times.Once);
         }
 
         [Fact]
         public async Task GetAll_ShouldReturnEmpty_WhenNoDataFound()
         {
             // Arrange
-            _repositoryMock.Setup(repo => repo.GetAll(1, 10)).ReturnsAsync(Enumerable.Empty<Member>());
+            _repositoryMock.Setup(repo => repo.GetAll(1, 10, null, null)).ReturnsAsync(Enumerable.Empty<Member>());
 
             // Act
-            var result = await _service.GetAll(1, 10).ConfigureAwait(false);
+            var result = await _service.GetAll(1, 10, null, null).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<IEnumerable<Member>>();
             result.Should().BeEmpty();
-            _repositoryMock.Verify(repo => repo.GetAll(1, 10), Times.Once);
+            _repositoryMock.Verify(repo => repo.GetAll(1, 10, null, null), Times.Once);
         }
 
         // Test Get Total
