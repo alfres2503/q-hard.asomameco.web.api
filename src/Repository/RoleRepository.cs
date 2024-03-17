@@ -113,6 +113,22 @@ namespace src.Repository
             }
         }
 
+        public async Task<int> GetCount()
+        {
+            try
+            {
+                return await _context.Role.CountAsync();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new Exception($"Database error: {dbEx.Message}", dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error ocurred: {ex.Message}", ex);
+            }
+        }
+
         public async Task<Role> Update(Role role)
         {
             try
