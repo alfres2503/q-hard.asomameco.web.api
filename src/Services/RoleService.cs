@@ -63,7 +63,17 @@ namespace src.Services
             }
         }
 
-     
+        public async Task<int> GetCount()
+        {
+            try
+            {
+                return await _roleRepository.GetCount().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
 
         public async Task<Role> Update(Role role)
         {
