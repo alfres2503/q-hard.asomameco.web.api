@@ -30,7 +30,7 @@ namespace src.Controllers
                 if(list == null)
                     return NoContent();
 
-                var total = await _memberService.GetCount().ConfigureAwait(false);
+                var total = await _memberService.GetCount(searchTerm).ConfigureAwait(false);
                 var totalPages = (int)Math.Ceiling((double)total / (double)pageSize);
 
                 var result = new PagedResult<Member>
@@ -77,6 +77,16 @@ namespace src.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(new { success = false, status = 400, message = "Invalid member" });
 
+                var memberByEmail = await _memberService.GetByEmail(member.Email).ConfigureAwait(false);
+
+                if (memberByEmail != null)
+                    return BadRequest(new { success = false, status = 400, message = "Email already exists" });
+
+                var memberByIDCard = await _memberService.GetByIdCard(member.IdCard).ConfigureAwait(false);
+
+                if (memberByIDCard != null)
+                    return BadRequest(new { success = false, status = 400, message = "ID Card already exists" });
+
                 var response = await _memberService.Create(member).ConfigureAwait(false);
 
                 return response != null ? CreatedAtAction(nameof(GetMemberById), new { id = response.Id }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to create member");
@@ -87,18 +97,31 @@ namespace src.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<ActionResult<Member>> UpdateMember([FromBody] Member _member)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Member>> UpdateMember(int id, [FromBody] Member _member)
         {
             try
             {
+                if (id <= 0)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid ID" });
+
                 if (_member == null)
                     return BadRequest(new { success = false, status = 400, message = "Invalid member" });
 
                 if (!ModelState.IsValid)
                     return BadRequest(new { success = false, status = 400, message = "Invalid member" });
 
-                var response = await _memberService.Update(_member).ConfigureAwait(false);
+                var memberByEmail = await _memberService.GetByEmail(_member.Email).ConfigureAwait(false);
+
+                if (memberByEmail != null && memberByEmail.Id != _member.Id)
+                    return BadRequest(new { success = false, status = 400, message = "Email already exists" });
+
+                var memberByIDCard = await _memberService.GetByIdCard(_member.IdCard).ConfigureAwait(false);
+
+                if (memberByIDCard != null && memberByIDCard.Id != _member.Id)
+                    return BadRequest(new { success = false, status = 400, message = "ID Card already exists" });
+
+                var response = await _memberService.Update(id, _member).ConfigureAwait(false);
 
                 return response != null ? AcceptedAtAction(nameof(GetMemberById), new { id = response.Id }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to update member");
             }

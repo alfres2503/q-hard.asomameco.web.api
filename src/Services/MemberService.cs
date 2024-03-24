@@ -22,9 +22,9 @@ namespace src.Services
             
         }
 
-        public async Task<int> GetCount()
+        public async Task<int> GetCount(string searchTerm)
         {
-            try { return await _memberRepository.GetCount().ConfigureAwait(false); }
+            try { return await _memberRepository.GetCount(searchTerm).ConfigureAwait(false); }
             catch (Exception ex)
             {
                 throw new Exception($"An error occurred: {ex.Message}", ex);
@@ -57,9 +57,9 @@ namespace src.Services
             }
         }
 
-        public async Task<Member> Update(Member member)
+        public async Task<Member> Update(int id, Member member)
         {
-            try { return await _memberRepository.Update(member); }
+            try { return await _memberRepository.Update(id, member); }
             catch (Exception ex)
             {
                 throw new Exception($"An error occurred: {ex.Message}", ex);
@@ -78,6 +78,15 @@ namespace src.Services
         public async Task<Member> ChangeState(int id)
         {
             try { return await _memberRepository.ChangeState(id); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<Member> GetByIdCard(string idCard)
+        {
+            try { return await _memberRepository.GetByIdCard(idCard); }
             catch (Exception ex)
             {
                 throw new Exception($"An error occurred: {ex.Message}", ex);

@@ -246,17 +246,17 @@ namespace test.Controllers
             // Arrange
             var request = _fixture.Create<Member>();
             var response = _fixture.Create<Member>();
-            _serviceMock.Setup(service => service.Update(request)).ReturnsAsync(response);
+            _serviceMock.Setup(service => service.Update(request.Id, request)).ReturnsAsync(response);
 
             // Act
-            var result = await _controller.UpdateMember(request).ConfigureAwait(false);
+            var result = await _controller.UpdateMember(request.Id, request).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<ActionResult<Member>>();
             result.Result.Should().BeOfType<AcceptedAtActionResult>();
 
-            _serviceMock.Verify(service => service.Update(request), Times.Once);
+            _serviceMock.Verify(service => service.Update(request.Id, request), Times.Once);
         }
 
         [Fact]
@@ -267,12 +267,12 @@ namespace test.Controllers
             _controller.ModelState.AddModelError("Name", "Name is required");
 
             // Act
-            var result = await _controller.UpdateMember(request).ConfigureAwait(false);
+            var result = await _controller.UpdateMember(request.Id, request).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<BadRequestObjectResult>();
-            _serviceMock.Verify(service => service.Update(request), Times.Never);
+            _serviceMock.Verify(service => service.Update(request.Id, request), Times.Never);
         }
 
         [Fact]
@@ -282,12 +282,12 @@ namespace test.Controllers
             Member request = null;
 
             // Act
-            var result = await _controller.UpdateMember(request).ConfigureAwait(false);
+            var result = await _controller.UpdateMember(1, request).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<BadRequestObjectResult>();
-            _serviceMock.Verify(service => service.Update(request), Times.Never);
+            _serviceMock.Verify(service => service.Update(request.Id, request), Times.Never);
         }
 
         [Fact]
@@ -295,16 +295,16 @@ namespace test.Controllers
         {
             // Arrange
             var request = _fixture.Create<Member>();
-            _serviceMock.Setup(service => service.Update(request)).ThrowsAsync(new Exception("Some error"));
+            _serviceMock.Setup(service => service.Update(request.Id, request)).ThrowsAsync(new Exception("Some error"));
 
             // Act
-            var result = await _controller.UpdateMember(request).ConfigureAwait(false);
+            var result = await _controller.UpdateMember(request.Id, request).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<ObjectResult>();
             result.Result.As<ObjectResult>().StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
-            _serviceMock.Verify(service => service.Update(request), Times.Once);
+            _serviceMock.Verify(service => service.Update(request.Id, request), Times.Once);
         }
 
         // Test Change State

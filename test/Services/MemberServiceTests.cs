@@ -218,16 +218,16 @@ namespace test.Services
             var memberMock = _fixture.Create<Member>();
             var response = _fixture.Create<Member>();
 
-            _repositoryMock.Setup(repo => repo.Update(memberMock)).ReturnsAsync(response);
+            _repositoryMock.Setup(repo => repo.Update(memberMock.Id, memberMock)).ReturnsAsync(response);
 
             // Act
-            var result = await _service.Update(memberMock).ConfigureAwait(false);
+            var result = await _service.Update(memberMock.Id, memberMock).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Member>();
             result.Should().BeEquivalentTo(response);
-            _repositoryMock.Verify(repo => repo.Update(memberMock), Times.Once);
+            _repositoryMock.Verify(repo => repo.Update(memberMock.Id, memberMock), Times.Once);
         }
 
         [Fact]
@@ -236,14 +236,14 @@ namespace test.Services
             // Arrange
             var memberMock = _fixture.Create<Member>();
 
-            _repositoryMock.Setup(repo => repo.Update(memberMock)).ReturnsAsync((Member)null);
+            _repositoryMock.Setup(repo => repo.Update(memberMock.Id, memberMock)).ReturnsAsync((Member)null);
 
             // Act
-            var result = await _service.Update(memberMock).ConfigureAwait(false);
+            var result = await _service.Update(memberMock.Id, memberMock).ConfigureAwait(false);
 
             // Assert
             result.Should().BeNull();
-            _repositoryMock.Verify(repo => repo.Update(memberMock), Times.Once);
+            _repositoryMock.Verify(repo => repo.Update(memberMock.Id, memberMock), Times.Once);
         }
 
         // Test Change State

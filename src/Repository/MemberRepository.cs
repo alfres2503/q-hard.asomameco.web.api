@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using src.Models;
+using src.Utils;
 
 namespace src.Repository
 {
@@ -89,10 +90,17 @@ namespace src.Repository
             }
         }
 
-        public async Task<int> GetCount()
+        public async Task<int> GetCount(string searchTerm)
         {
             try
             {
+                // if there is a search term, return the count of the filtered query
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    var query = _context.Member.AsQueryable();
+                    return await query.Where(m => m.FirstName.Contains(searchTerm) || m.LastName.Contains(searchTerm) || m.Email.Contains(searchTerm)).CountAsync();
+                }
+
                 return await _context.Member.CountAsync();
             }
             catch (DbUpdateException dbEx)
@@ -156,13 +164,12 @@ namespace src.Repository
         {
             try
             {
+                member.Password = Cryptography.EncryptAES(member.Password);
+
                 await _context.Member.AddAsync(member);
                 await _context.SaveChangesAsync();
 
-                if (this.GetByID(member.Id) != null)
-                    return member;
-                else
-                    throw new Exception("Member not created");
+                return member; 
             }
             catch (DbUpdateException dbEx)
             {
@@ -222,13 +229,35 @@ namespace src.Repository
 
         }
 
-        public async Task<Member> Update(Member member)
+        public async Task<Member> Update(int id,Member member)
         {
             try
             {
-                _context.Entry(member).State = EntityState.Modified;
+                _context.Member.Find(id).IdRole = member.IdRole;
+                _context.Member.Find(id).IdCard = member.IdCard;
+                _context.Member.Find(id).FirstName = member.FirstName;
+                _context.Member.Find(id).LastName = member.LastName;
+                _context.Member.Find(id).Email = member.Email;
+                _context.Member.Find(id).IsActive = member.IsActive;
+
+                if (member.Password != null)
+                    _context.Member.Find(id).Password = member.Password;
+
                 await _context.SaveChangesAsync();
-                return member;
+                return await _context.Member
+                   .Include(m => m.Role)
+                   .Select(m => new Member
+                   {
+                       Id = m.Id,
+                       IdRole = m.IdRole,
+                       IdCard = m.IdCard,
+                       FirstName = m.FirstName,
+                       LastName = m.LastName,
+                       Email = m.Email,
+                       IsActive = m.IsActive,
+                       Role = m.Role
+                   })
+                   .FirstOrDefaultAsync(m => m.Id == id);
             }
             catch (DbUpdateException dbEx)
             {
@@ -238,6 +267,35 @@ namespace src.Repository
             {
                 throw new Exception($"An error occurred: {ex.Message}", ex);
             }
-        }        
+        }
+        
+        public async Task<Member> GetByIdCard(string idCard)
+        {
+            try
+            {
+                return await _context.Member
+                    .Include(m => m.Role)
+                    .Select(m => new Member
+                    {
+                        Id = m.Id,
+                        IdRole = m.IdRole,
+                        IdCard = m.IdCard,
+                        FirstName = m.FirstName,
+                        LastName = m.LastName,
+                        Email = m.Email,
+                        IsActive = m.IsActive,
+                        Role = m.Role
+                    })
+                    .FirstOrDefaultAsync(m => m.IdCard == idCard);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new Exception($"Database error: {dbEx.Message}", dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
     }
 }
