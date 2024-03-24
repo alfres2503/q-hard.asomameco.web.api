@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using src.Models;
 using src.Services;
+using src.Utils;
 
 namespace src.Controllers
 {
@@ -25,8 +26,23 @@ namespace src.Controllers
         {
             try
             {
-                var response = await _eventService.GetAll(pageNumber, pageSize).ConfigureAwait(false);
-                return response != null ? Ok(response) : NoContent();
+                var list = await _eventService.GetAll(pageNumber, pageSize).ConfigureAwait(false);
+
+                if (list == null)
+                    return NoContent();
+
+                var total = await _eventService.GetCount().ConfigureAwait(false);
+                var totalPages = (int)Math.Ceiling((double)total / (double)pageSize);
+
+                var result = new PagedResult<Event>
+                {
+                    List = list,
+                    TotalPages = totalPages,
+                    TotalRecords = total
+                };
+
+                return Ok(result);
+
             }
             catch (Exception ex)
             {

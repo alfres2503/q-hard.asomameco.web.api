@@ -48,6 +48,18 @@ namespace src.Services
             }
         }
 
+        public async Task<int> GetCount()
+        {
+            try
+            {
+                return await _eventRepository.GetCount().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
         public async Task<Event> Update(Event _event)
         {
             try { return await _eventRepository.Update(_event); }
