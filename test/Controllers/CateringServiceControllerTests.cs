@@ -35,7 +35,7 @@ namespace test.Controllers
             // Arrange
             var cateringserviceMock = _fixture.CreateMany<CateringService>(50).ToList();
 
-            _serviceMock.Setup(service => service.GetAll(1, 10)).ReturnsAsync(cateringserviceMock);
+            _serviceMock.Setup(service => service.GetAll(1, 10,null,null)).ReturnsAsync(cateringserviceMock);
 
             // Act
             var result = await _controller.GetCateringServices().ConfigureAwait(false);
@@ -48,14 +48,14 @@ namespace test.Controllers
                 .Should()
                 .NotBeNull();
               
-            _serviceMock.Verify(service => service.GetAll(1, 10), Times.Once);
+            _serviceMock.Verify(service => service.GetAll(1, 10, null, null), Times.Once);
         }
 
         [Fact]
         public async Task GetAll_ShouldReturnNoContent_WhenNoDataFound()
         {
             // Arrange
-            _serviceMock.Setup(service => service.GetAll(1, 10)).ReturnsAsync((List<CateringService>)null);
+            _serviceMock.Setup(service => service.GetAll(1, 10, null, null)).ReturnsAsync((List<CateringService>)null);
 
             // Act
             var result = await _controller.GetCateringServices().ConfigureAwait(false);
@@ -63,7 +63,7 @@ namespace test.Controllers
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<NoContentResult>();
-            _serviceMock.Verify(service => service.GetAll(1, 10), Times.Once);
+            _serviceMock.Verify(service => service.GetAll(1, 10, null, null), Times.Once);
         }
 
 
@@ -71,7 +71,7 @@ namespace test.Controllers
         public async Task GetAll_ShouldReturnInternalServerError_WhenExceptionThrown()
         {
             // Arrange
-            _serviceMock.Setup(service => service.GetAll(1, 10)).ThrowsAsync(new Exception("Some error"));
+            _serviceMock.Setup(service => service.GetAll(1, 10, null, null)).ThrowsAsync(new Exception("Some error"));
 
             // Act
             var result = await _controller.GetCateringServices().ConfigureAwait(false);
@@ -80,7 +80,7 @@ namespace test.Controllers
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<ObjectResult>();
             result.Result.As<ObjectResult>().StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
-            _serviceMock.Verify(service => service.GetAll(1, 10), Times.Once);
+            _serviceMock.Verify(service => service.GetAll(1, 10, null, null), Times.Once);
         }
 
         // Test Get By ID
@@ -246,17 +246,17 @@ namespace test.Controllers
             // Arrange
             var request = _fixture.Create<CateringService>();
             var response = _fixture.Create<CateringService>();
-            _serviceMock.Setup(service => service.Update(request)).ReturnsAsync(response);
+            _serviceMock.Setup(service => service.Update(request.Id, request)).ReturnsAsync(response);
 
             // Act
-            var result = await _controller.UpdateCateringService(request).ConfigureAwait(false);
+            var result = await _controller.UpdateCateringService(request.Id, request).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<ActionResult<CateringService>>();
             result.Result.Should().BeOfType<AcceptedAtActionResult>();
 
-            _serviceMock.Verify(service => service.Update(request), Times.Once);
+            _serviceMock.Verify(service => service.Update(request.Id, request), Times.Once);
         }
 
         [Fact]
@@ -267,12 +267,12 @@ namespace test.Controllers
             _controller.ModelState.AddModelError("Name", "Name is required");
 
             // Act
-            var result = await _controller.UpdateCateringService(request).ConfigureAwait(false);
+            var result = await _controller.UpdateCateringService(request.Id, request).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<BadRequestObjectResult>();
-            _serviceMock.Verify(service => service.Update(request), Times.Never);
+            _serviceMock.Verify(service => service.Update(request.Id, request), Times.Never);
         }
 
         [Fact]
@@ -282,12 +282,12 @@ namespace test.Controllers
             CateringService request = null;
 
             // Act
-            var result = await _controller.UpdateCateringService(request).ConfigureAwait(false);
+            var result = await _controller.UpdateCateringService(request.Id, request).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<BadRequestObjectResult>();
-            _serviceMock.Verify(service => service.Update(request), Times.Never);
+            _serviceMock.Verify(service => service.Update(request.Id, request), Times.Never);
         }
 
         [Fact]
@@ -295,16 +295,16 @@ namespace test.Controllers
         {
             // Arrange
             var request = _fixture.Create<CateringService>();
-            _serviceMock.Setup(service => service.Update(request)).ThrowsAsync(new Exception("Some error"));
+            _serviceMock.Setup(service => service.Update(request.Id, request)).ThrowsAsync(new Exception("Some error"));
 
             // Act
-            var result = await _controller.UpdateCateringService(request).ConfigureAwait(false);
+            var result = await _controller.UpdateCateringService(request.Id, request).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<ObjectResult>();
             result.Result.As<ObjectResult>().StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
-            _serviceMock.Verify(service => service.Update(request), Times.Once);
+            _serviceMock.Verify(service => service.Update(request.Id, request), Times.Once);
         }
 
         // Test Change State
