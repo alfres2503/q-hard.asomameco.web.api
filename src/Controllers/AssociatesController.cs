@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using src.Models;
 using src.Services;
 using src.Utils;
@@ -27,7 +28,7 @@ namespace src.Controllers
             {
                 var list = await _associateService.GetAll(pageNumber, pageSize, searchTerm, orderBy).ConfigureAwait(false);
 
-                if(list == null)
+                if (list == null)
                     return NoContent();
 
                 var total = await _associateService.GetCount(searchTerm).ConfigureAwait(false);
@@ -86,6 +87,28 @@ namespace src.Controllers
 
                 if (associateByIDCard != null)
                     return BadRequest(new { success = false, status = 400, message = "ID Card already exists" });
+
+                var response = await _associateService.Create(associate).ConfigureAwait(false);
+
+                return response != null ? CreatedAtAction(nameof(GetAssociateById), new { id = response.Id }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to create associate");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost("excel")]
+        public async Task<ActionResult<Associate>> CreateExcelAssociate([FromBody] Associate associate)
+        {
+            try
+            {
+                if (associate == null)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid associate" });
+
+                if (!ModelState.IsValid)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid associate" });
 
                 var response = await _associateService.Create(associate).ConfigureAwait(false);
 
