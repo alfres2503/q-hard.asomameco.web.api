@@ -89,20 +89,23 @@ namespace src.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<Event>> UpdateEvent(int id, [FromBody] Event _event)
         {
             try
             {
+                if (id <= 0)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid ID" });
+
                 if (_event == null)
-                    return BadRequest(new { success = false, status = 400, message = "Invalid event" });
+                    return BadRequest(new { success = false, status = 400, message = "Invalid member" });
 
                 if (!ModelState.IsValid)
-                    return BadRequest(new { success = false, status = 400, message = "Invalid event" });
+                    return BadRequest(new { success = false, status = 400, message = "Invalid member" });
 
                 var response = await _eventService.Update(id, _event).ConfigureAwait(false);
 
-                return AcceptedAtAction(nameof(GetEventById), new { id = response.Id }, response);
+                return response != null ? AcceptedAtAction(nameof(GetEventById), new { id = response.Id }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to update member");
             }
             catch (Exception ex)
             {
