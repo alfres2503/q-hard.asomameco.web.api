@@ -90,7 +90,7 @@ namespace src.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<Event>> UpdateEvent([FromBody] Event _event)
+        public async Task<ActionResult<Event>> UpdateEvent(int id, [FromBody] Event _event)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace src.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(new { success = false, status = 400, message = "Invalid event" });
 
-                var response = await _eventService.Update(_event).ConfigureAwait(false);
+                var response = await _eventService.Update(id, _event).ConfigureAwait(false);
 
                 return AcceptedAtAction(nameof(GetEventById), new { id = response.Id }, response);
             }

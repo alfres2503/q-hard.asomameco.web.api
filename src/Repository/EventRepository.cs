@@ -155,13 +155,33 @@ namespace src.Repository
             }
         }
 
-        public async Task<Event> Update(Event _event)
+        public async Task<Event> Update(int id, Event _event)
         {
             try
             {
-                _context.Entry(_event).State = EntityState.Modified;
+                _context.Event.Find(id).IdMember = _event.IdMember;
+                _context.Event.Find(id).Name = _event.Name;
+                _context.Event.Find(id).Description = _event.Description;
+                _context.Event.Find(id).Date = _event.Date;
+                _context.Event.Find(id).Time = _event.Time;
+                _context.Event.Find(id).Place = _event.Place;
+                _context.Event.Find(id).IdCateringService = _event.IdCateringService;
+
                 await _context.SaveChangesAsync();
-                return _event;
+                return await _context.Event
+                   .Include(e => e.Member)
+                    .Select(e => new Event
+                    {
+                        Id = e.Id,
+                        IdMember = e.IdMember,
+                        Name = e.Name,
+                        Description = e.Description,
+                        Date = e.Date,
+                        Place = e.Place,
+                        Time = e.Time,
+                        IdCateringService = e.IdCateringService,
+                    })
+                   .FirstOrDefaultAsync(m => m.Id == id);
             }
             catch (DbUpdateException dbEx)
             {

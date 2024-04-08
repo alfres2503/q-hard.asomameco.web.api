@@ -8,7 +8,7 @@ namespace src.Repository
         Task<Event> GetByID(int id);
         Task<int> GetCount();
         Task<Event> Create(Event _event);
-        Task<Event> Update(Event _event);
+        Task<Event> Update(int id, Event _event);
         Task<bool> Delete(int id);
     }
 }
