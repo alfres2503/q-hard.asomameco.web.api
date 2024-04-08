@@ -4,7 +4,7 @@ namespace src.Repository
 {
     public interface IEventRepository
     {
-        Task<IEnumerable<Event>> GetAll(int pageNumber, int pageSize);
+        Task<IEnumerable<Event>> GetAll(int pageNumber, int pageSize, string searchTerm, string orderBy);
         Task<Event> GetByID(int id);
         Task<int> GetCount();
         Task<Event> Create(Event _event);
