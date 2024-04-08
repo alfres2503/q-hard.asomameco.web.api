@@ -67,17 +67,43 @@ namespace src.Repository
 
         }
 
-        public async Task<IEnumerable<Role>> GetAll(int pageNumber, int pageSize)
+        public async Task<IEnumerable<Role>> GetAll(int pageNumber, int pageSize, string searchTerm, string orderBy)
         {
             try
             {
-                return await _context.Role
-                    .OrderBy(r => r.Id)
+                var query = _context.Role.AsQueryable();
+
+                // if there is a search term, filter the query
+                if (!string.IsNullOrEmpty(searchTerm))
+                    query = query.Where(r => r.Description.Contains(searchTerm));
+
+                // if there is an orderBy parameter, order the query
+                switch (orderBy)
+                {
+                    case "id":
+                        query = query.OrderBy(r => r.Id);
+                        break;
+                    case "id_desc":
+                        query = query.OrderByDescending(r => r.Id);
+                        break;
+                    case "name":
+                        query = query.OrderBy(r => r.Description);
+                        break;
+                    case "name_desc":
+                        query = query.OrderByDescending(r => r.Description);
+                        break;
+                    default:
+                        query = query.OrderBy(m => m.Id);
+                        break;
+                }
+
+                return await query
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
-                    .Select(r => new Role 
-                    { Id = r.Id,
-                      Description = r.Description
+                    .Select(r => new Role
+                    {
+                        Id = r.Id,
+                        Description = r.Description
                     })
                     .ToListAsync();
             }
@@ -113,10 +139,17 @@ namespace src.Repository
             }
         }
 
-        public async Task<int> GetCount()
+        public async Task<int> GetCount(string searchTerm)
         {
             try
             {
+                // if there is a search term, return the count of the filtered query
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    var query = _context.Role.AsQueryable();
+                    return await query.Where(r => r.Description.Contains(searchTerm)).CountAsync();
+                }
+
                 return await _context.Role.CountAsync();
             }
             catch (DbUpdateException dbEx)
@@ -129,13 +162,22 @@ namespace src.Repository
             }
         }
 
-        public async Task<Role> Update(Role role)
+        public async Task<Role> Update(int id, Role role)
         {
             try
             {
-                _context.Entry(role).State = EntityState.Modified;
+                _context.Role.Find(id).Id = role.Id;
+                _context.Role.Find(id).Description = role.Description;
+
                 await _context.SaveChangesAsync();
-                return role;
+                return await _context.Role
+                    .Select(r => new Role
+                    {
+                        Id = r.Id,
+                        Description = r.Description
+                    })
+                    .FirstOrDefaultAsync(r => r.Id == id);
+                    ;
             }
             catch (DbUpdateException dbEx)
             {
