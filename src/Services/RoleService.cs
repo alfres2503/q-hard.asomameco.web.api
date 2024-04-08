@@ -86,4 +86,5 @@ namespace src.Services
                 throw new Exception($"An error occurred: {ex.Message}", ex);
             }
         }
+    }
 }
