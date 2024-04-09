@@ -21,16 +21,16 @@ namespace src.Controllers
         // to return 204, use NoContent() instead of Ok(null)
 
         [HttpGet]
-        public async Task<ActionResult<PagedResult<Attendance>>> GetAttendances(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedResult<Attendance>>> GetAttendances(int pageNumber = 1, int pageSize = 10, string searchTerm = null, string orderBy = null)
         {
             try
             {
-                var list = await _attendanceService.GetAll(pageNumber, pageSize).ConfigureAwait(false);
+                var list = await _attendanceService.GetAll(pageNumber, pageSize, searchTerm, orderBy).ConfigureAwait(false);
 
                 if(list == null)
                     return NoContent();
 
-                var total = await _attendanceService.GetCount().ConfigureAwait(false);
+                var total = await _attendanceService.GetCount(searchTerm).ConfigureAwait(false);
                 var totalPages = (int)Math.Ceiling((double)total / (double)pageSize);
 
                 var result = new PagedResult<Attendance>
@@ -75,6 +75,24 @@ namespace src.Controllers
                     return BadRequest(new { success = false, status = 400, message = "Invalid Associate ID" });
 
                 var response = await _attendanceService.GetByIdAssociate(id, pageNumber, pageSize).ConfigureAwait(false);
+
+                return response != null ? Ok(response) : NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("event-associate/{idEvent}/{idAssociate}")]
+        public async Task<ActionResult<Attendance>> GetByIdEventIdAssociateM(int idEvent, int idAssociate)
+        {
+            try
+            {
+                if (idEvent <= 0 && idAssociate <= 0)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid Associate ID" });
+
+                var response = await _attendanceService.GetByIdEventIdAssociate(idEvent, idAssociate).ConfigureAwait(false);
 
                 return response != null ? Ok(response) : NoContent();
             }
