@@ -130,19 +130,16 @@ namespace src.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(new { success = false, status = 400, message = "Invalid Attendance" });
 
-                var response = await _attendanceService.Create(attendance).ConfigureAwait(false);
-            
+                var attendanceByEventIdAssociate = await _attendanceService.GetByIdEventIdAssociate(attendance.IdEvent,attendance.IdAssociate).ConfigureAwait(false);
 
-                
-                    if (response != null)
-                    {
-                       return CreatedAtAction(nameof(GetByIdEventIdAssociate), new { idEvent = response.IdEvent, idAssociate = response.IdAssociate }, response);
-                    }
-                    else
-                    {
-                       return StatusCode(StatusCodes.Status500InternalServerError, "Failed to create Attendance");
-                    }
-                
+                if (attendanceByEventIdAssociate != null)
+                    return BadRequest(new { success = false, status = 400, message = "Attendace already exists" });
+
+
+                var response = await _attendanceService.Create(attendance).ConfigureAwait(false);
+
+                return response != null ? CreatedAtAction(nameof(GetByIdEventIdAssociate), new { idEvent = response.IdEvent, idAssociate = response.IdAssociate }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to create member");
+
             }
             catch (Exception ex)
             {
