@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using src.Models;
 using src.Services;
 using src.Utils;
@@ -85,7 +86,7 @@ namespace src.Controllers
         }
 
         [HttpGet("event-associate/{idEvent}/{idAssociate}")]
-        public async Task<ActionResult<Attendance>> GetByIdEventIdAssociateM(int idEvent, int idAssociate)
+        public async Task<ActionResult<Attendance>> GetByIdEventIdAssociate(int idEvent, int idAssociate)
         {
             try
             {
@@ -102,22 +103,23 @@ namespace src.Controllers
             }
         }
 
-        private async Task<ActionResult<Attendance>> GetByIdEventIdAssociate(int idEvent, int idAssociate)
-        {
-            try
-            {
-                if (idEvent <= 0 && idAssociate <= 0)
-                    return BadRequest(new { success = false, status = 400, message = "Invalid Associate ID" });
+        //private async Task<ActionResult<Attendance>> GetByIdEventIdAssociate(int idEvent, int idAssociate)
+        //{
+        //    try
+        //    {
+        //        if (idEvent <= 0 && idAssociate <= 0)
+        //            return BadRequest(new { success = false, status = 400, message = "Invalid Associate ID" });
 
-                var response = await _attendanceService.GetByIdEventIdAssociate(idEvent,idAssociate).ConfigureAwait(false);
+        //        var response = await _attendanceService.GetByIdEventIdAssociate(idEvent,idAssociate).ConfigureAwait(false);
 
-                return response != null ? Ok(response) : NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+        //        return response != null ? Ok(response) : NoContent();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        //    }
+        //}
+
 
         [HttpPost]
         public async Task<ActionResult<Attendance>> CreateAttendance([FromBody] Attendance attendance)
@@ -125,27 +127,26 @@ namespace src.Controllers
             try
             {
                 if (attendance == null)
-                    return BadRequest(new { success = false, status = 400, message = "Invalid Attendance" });
+                    return BadRequest(new { success = false, status = 400, message = "Invalid attendance" });
 
                 if (!ModelState.IsValid)
-                    return BadRequest(new { success = false, status = 400, message = "Invalid Attendance" });
+                    return BadRequest(new { success = false, status = 400, message = "Invalid event" });
 
-                var attendanceByEventIdAssociate = await _attendanceService.GetByIdEventIdAssociate(attendance.IdEvent,attendance.IdAssociate).ConfigureAwait(false);
+                var attendanceByEventIdAssociate = await _attendanceService.GetByIdEventIdAssociate(attendance.IdEvent, attendance.IdAssociate).ConfigureAwait(false);
 
                 if (attendanceByEventIdAssociate != null)
                     return BadRequest(new { success = false, status = 400, message = "Attendace already exists" });
 
-
                 var response = await _attendanceService.Create(attendance).ConfigureAwait(false);
 
-                return response != null ? CreatedAtAction(nameof(GetByIdEventIdAssociate), new { idEvent = response.IdEvent, idAssociate = response.IdAssociate }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to create member");
-
+                return CreatedAtAction(nameof(GetByIdEventIdAssociate), new { idEvent = response.IdEvent, idAssociate = response.IdAssociate }, response);
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
 
     }
 }
