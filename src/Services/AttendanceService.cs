@@ -12,25 +12,6 @@ namespace src.Services
             _attendanceRepository = attendanceRepository;
         }
 
-        public async Task<IEnumerable<Attendance>> GetAll(int pageNumber, int pageSize)
-        {
-            try { return await _attendanceRepository.GetAll(pageNumber, pageSize).ConfigureAwait(false); }
-            catch (Exception ex)
-            {
-                throw new Exception($"An error occurred: {ex.Message}", ex);
-            }
-            
-        }
-
-        public async Task<int> GetCount()
-        {
-            try { return await _attendanceRepository.GetCount().ConfigureAwait(false); }
-            catch (Exception ex)
-            {
-                throw new Exception($"An error occurred: {ex.Message}", ex);
-            }
-        }
-
         public async Task<IEnumerable<Attendance>> GetByIdEvent(int id, int pageNumber, int pageSize)
         {
             try { return await _attendanceRepository.GetByIdEvent(id, pageNumber, pageSize).ConfigureAwait(false); }
@@ -67,5 +48,22 @@ namespace src.Services
             }
         }
 
+        public async Task<IEnumerable<Attendance>> GetAll(int pageNumber, int pageSize, string searchTerm, string orderBy)
+        {
+            try { return await _attendanceRepository.GetAll(pageNumber, pageSize,searchTerm,orderBy).ConfigureAwait(false); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<int> GetCount(string searchTerm)
+        {
+            try { return await _attendanceRepository.GetCount(searchTerm).ConfigureAwait(false); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
     }
 }

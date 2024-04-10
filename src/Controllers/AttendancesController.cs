@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using src.Models;
 using src.Services;
 using src.Utils;
@@ -21,16 +22,16 @@ namespace src.Controllers
         // to return 204, use NoContent() instead of Ok(null)
 
         [HttpGet]
-        public async Task<ActionResult<PagedResult<Attendance>>> GetAttendances(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedResult<Attendance>>> GetAttendances(int pageNumber = 1, int pageSize = 10, string searchTerm = null, string orderBy = null)
         {
             try
             {
-                var list = await _attendanceService.GetAll(pageNumber, pageSize).ConfigureAwait(false);
+                var list = await _attendanceService.GetAll(pageNumber, pageSize, searchTerm, orderBy).ConfigureAwait(false);
 
                 if(list == null)
                     return NoContent();
 
-                var total = await _attendanceService.GetCount().ConfigureAwait(false);
+                var total = await _attendanceService.GetCount(searchTerm).ConfigureAwait(false);
                 var totalPages = (int)Math.Ceiling((double)total / (double)pageSize);
 
                 var result = new PagedResult<Attendance>
@@ -84,14 +85,15 @@ namespace src.Controllers
             }
         }
 
-        private async Task<ActionResult<Attendance>> GetByIdEventIdAssociate(int idEvent, int idAssociate)
+        [HttpGet("event-associate/{idEvent}/{idAssociate}")]
+        public async Task<ActionResult<Attendance>> GetByIdEventIdAssociate(int idEvent, int idAssociate)
         {
             try
             {
                 if (idEvent <= 0 && idAssociate <= 0)
                     return BadRequest(new { success = false, status = 400, message = "Invalid Associate ID" });
 
-                var response = await _attendanceService.GetByIdEventIdAssociate(idEvent,idAssociate).ConfigureAwait(false);
+                var response = await _attendanceService.GetByIdEventIdAssociate(idEvent, idAssociate).ConfigureAwait(false);
 
                 return response != null ? Ok(response) : NoContent();
             }
@@ -101,36 +103,50 @@ namespace src.Controllers
             }
         }
 
+        //private async Task<ActionResult<Attendance>> GetByIdEventIdAssociate(int idEvent, int idAssociate)
+        //{
+        //    try
+        //    {
+        //        if (idEvent <= 0 && idAssociate <= 0)
+        //            return BadRequest(new { success = false, status = 400, message = "Invalid Associate ID" });
+
+        //        var response = await _attendanceService.GetByIdEventIdAssociate(idEvent,idAssociate).ConfigureAwait(false);
+
+        //        return response != null ? Ok(response) : NoContent();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        //    }
+        //}
+
+
         [HttpPost]
         public async Task<ActionResult<Attendance>> CreateAttendance([FromBody] Attendance attendance)
         {
             try
             {
                 if (attendance == null)
-                    return BadRequest(new { success = false, status = 400, message = "Invalid Attendance" });
+                    return BadRequest(new { success = false, status = 400, message = "Invalid attendance" });
 
                 if (!ModelState.IsValid)
-                    return BadRequest(new { success = false, status = 400, message = "Invalid Attendance" });
+                    return BadRequest(new { success = false, status = 400, message = "Invalid event" });
+
+                var attendanceByEventIdAssociate = await _attendanceService.GetByIdEventIdAssociate(attendance.IdEvent, attendance.IdAssociate).ConfigureAwait(false);
+
+                if (attendanceByEventIdAssociate != null)
+                    return BadRequest(new { success = false, status = 400, message = "Attendace already exists" });
 
                 var response = await _attendanceService.Create(attendance).ConfigureAwait(false);
-            
 
-                
-                    if (response != null)
-                    {
-                       return CreatedAtAction(nameof(GetByIdEventIdAssociate), new { idEvent = response.IdEvent, idAssociate = response.IdAssociate }, response);
-                    }
-                    else
-                    {
-                       return StatusCode(StatusCodes.Status500InternalServerError, "Failed to create Attendance");
-                    }
-                
+                return CreatedAtAction(nameof(GetByIdEventIdAssociate), new { idEvent = response.IdEvent, idAssociate = response.IdAssociate }, response);
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
 
     }
 }
