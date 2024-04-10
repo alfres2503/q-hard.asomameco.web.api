@@ -30,9 +30,9 @@ namespace src.Services
             }
         }
 
-        public async Task<IEnumerable<Event>> GetAll(int pageNumber, int pageSize)
+        public async Task<IEnumerable<Event>> GetAll(int pageNumber, int pageSize, string searchTerm, string orderBy)
         {
-            try { return await _eventRepository.GetAll(pageNumber, pageSize).ConfigureAwait(false); }
+            try { return await _eventRepository.GetAll(pageNumber, pageSize, searchTerm, orderBy).ConfigureAwait(false); }
             catch (Exception ex)
             {
                 throw new Exception($"An error occurred: {ex.Message}", ex);
@@ -60,9 +60,9 @@ namespace src.Services
             }
         }
 
-        public async Task<Event> Update(Event _event)
+        public async Task<Event> Update(int id, Event _event)
         {
-            try { return await _eventRepository.Update(_event); }
+            try { return await _eventRepository.Update(id, _event); }
             catch (Exception ex)
             {
                 throw new Exception($"An error occurred: {ex.Message}", ex);

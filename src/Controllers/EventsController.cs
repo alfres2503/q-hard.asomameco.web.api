@@ -22,11 +22,11 @@ namespace src.Controllers
         // to return 204, use NoContent() instead of Ok(null)
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Event>>> GetEvents(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<Event>>> GetEvents(int pageNumber = 1, int pageSize = 10, string searchTerm = null, string orderBy = null)
         {
             try
             {
-                var list = await _eventService.GetAll(pageNumber, pageSize).ConfigureAwait(false);
+                var list = await _eventService.GetAll(pageNumber, pageSize, searchTerm, orderBy).ConfigureAwait(false);
 
                 if (list == null)
                     return NoContent();
@@ -89,20 +89,23 @@ namespace src.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<ActionResult<Event>> UpdateEvent([FromBody] Event _event)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Event>> UpdateEvent(int id, [FromBody] Event _event)
         {
             try
             {
+                if (id <= 0)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid ID" });
+
                 if (_event == null)
-                    return BadRequest(new { success = false, status = 400, message = "Invalid event" });
+                    return BadRequest(new { success = false, status = 400, message = "Invalid member" });
 
                 if (!ModelState.IsValid)
-                    return BadRequest(new { success = false, status = 400, message = "Invalid event" });
+                    return BadRequest(new { success = false, status = 400, message = "Invalid member" });
 
-                var response = await _eventService.Update(_event).ConfigureAwait(false);
+                var response = await _eventService.Update(id, _event).ConfigureAwait(false);
 
-                return AcceptedAtAction(nameof(GetEventById), new { id = response.Id }, response);
+                return response != null ? AcceptedAtAction(nameof(GetEventById), new { id = response.Id }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to update member");
             }
             catch (Exception ex)
             {
