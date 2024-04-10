@@ -39,11 +39,11 @@ namespace src.Services
             }
         }
 
-        public async Task<IEnumerable<Role>> GetAll(int pageNumber, int pageSize)
+        public async Task<IEnumerable<Role>> GetAll(int pageNumber, int pageSize, string searchTerm, string orderBy)
         {
             try
             {
-                return await _roleRepository.GetAll(pageNumber, pageSize).ConfigureAwait(false);
+                return await _roleRepository.GetAll(pageNumber, pageSize, searchTerm, orderBy).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -63,11 +63,11 @@ namespace src.Services
             }
         }
 
-        public async Task<int> GetCount()
+        public async Task<int> GetCount(string searchTerm)
         {
             try
             {
-                return await _roleRepository.GetCount().ConfigureAwait(false);
+                return await _roleRepository.GetCount(searchTerm).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -75,11 +75,11 @@ namespace src.Services
             }
         }
 
-        public async Task<Role> Update(Role role)
+        public async Task<Role> Update(int id, Role role)
         {
             try
             {
-                return await _roleRepository.Update(role);
+                return await _roleRepository.Update(id, role);
             }
             catch (Exception ex)
             {

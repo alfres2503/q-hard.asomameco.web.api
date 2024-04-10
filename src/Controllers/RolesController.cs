@@ -22,16 +22,16 @@ namespace src.Controllers
         // to return 204, use NoContent() instead of Ok(null)
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Role>>> GetRoles(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<Role>>> GetRoles(int pageNumber = 1, int pageSize = 10, string searchTerm = null, string orderBy = null)
         {
             try
             {
-                var list = await _roleService.GetAll(pageNumber, pageSize).ConfigureAwait(false);
+                var list = await _roleService.GetAll(pageNumber, pageSize, searchTerm, orderBy).ConfigureAwait(false);
                 
                 if (list == null) 
                     return NoContent();
 
-                var total = await _roleService.GetCount().ConfigureAwait(false);
+                var total = await _roleService.GetCount(searchTerm).ConfigureAwait(false);
                 var totalPages = (int)Math.Ceiling((double)total / (double)pageSize);
 
                 var result = new PagedResult<Role>
@@ -84,7 +84,8 @@ namespace src.Controllers
 
                 var response = await _roleService.Create(role).ConfigureAwait(false);
 
-                return CreatedAtAction(nameof(GetRoleById), new { id = response.Id }, response);
+          
+                return response != null ? CreatedAtAction(nameof(GetRoleById), new { id = response.Id }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to create role");
 
             }
             catch (Exception ex)
@@ -93,21 +94,24 @@ namespace src.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<ActionResult<Role>> UpdateRole([FromBody] Role role)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Role>> UpdateRole(int id, [FromBody] Role role)
         {
             try
             {
+                if (id <= 0)
+                    return BadRequest(new { success = false, status = 400, message = "Invalid ID" });
+
                 if (role == null)
                     return BadRequest(new { success = false, status = 400, message = "Invalid role" });
 
                 if (!ModelState.IsValid)
                     return BadRequest(new { success = false, status = 400, message = "Invalid role" });
 
-                var response = await _roleService.Update(role).ConfigureAwait(false);
+                var response = await _roleService.Update(id, role).ConfigureAwait(false);
 
-                return AcceptedAtAction(nameof(GetRoleById), new { id = response.Id }, response);
-                
+                return response != null ? AcceptedAtAction(nameof(GetRoleById), new { id = response.Id }, response) : StatusCode(StatusCodes.Status500InternalServerError, "Failed to update role");
+
             }
             catch (Exception ex)
             {
