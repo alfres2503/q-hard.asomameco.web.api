@@ -21,12 +21,6 @@ namespace src.Models.Reports
         public int EventsCount { get; set; }
     }
 
-    public class AttendanceGrowthRateReport
-    {
-        public string EventName { get; set; }
-        public double GrowthRate { get; set; }
-    }
-
     public class MemberEventsCoveredReport
     {
         public string MemberName { get; set; }
