@@ -22,5 +22,32 @@ namespace src.Services
             }
         }
 
+        public async Task<IEnumerable<EventAttendanceReport>> GetEventAttendanceTrend()
+        {
+            try { return await _ReportRepository.GetEventAttendanceTrend().ConfigureAwait(false); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<IEnumerable<MonthlyEventsReport>> GetMonthlyEventsReport()
+        {
+            try { return await _ReportRepository.GetMonthlyEventsReport().ConfigureAwait(false); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<MemberEventsCoveredReport> GetMemberWithMostEventsCovered()
+        {
+            try { return await _ReportRepository.GetMemberWithMostEventsCovered().ConfigureAwait(false); }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
     }
 }

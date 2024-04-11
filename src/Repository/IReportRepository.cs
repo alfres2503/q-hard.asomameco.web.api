@@ -10,5 +10,9 @@ namespace src.Repository
     public interface IReportRepository
     {
         Task<AttendancePercentageReport> GetAttendancePercentageData();
+        Task<IEnumerable<EventAttendanceReport>> GetEventAttendanceTrend();
+        Task<IEnumerable<MonthlyEventsReport>> GetMonthlyEventsReport();
+        Task<MemberEventsCoveredReport> GetMemberWithMostEventsCovered();
+
     }
 }

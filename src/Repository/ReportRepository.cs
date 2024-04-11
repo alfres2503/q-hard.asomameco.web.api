@@ -58,5 +58,97 @@ namespace src.Repository
             }
         }
 
+        public async Task<IEnumerable<EventAttendanceReport>> GetEventAttendanceTrend()
+        {
+            try
+            {
+                // Obtener todos los eventos ordenados por fecha
+                var events = await _context.Event.ToListAsync();
+
+                // Generar el reporte de asistencia para cada evento
+                var attendanceTrend = new List<EventAttendanceReport>();
+                foreach (var evt in events)
+                {
+                    var attendanceCount = await _context.Attendance.CountAsync(a => a.IdEvent == evt.Id && a.isConfirmed);
+                    attendanceTrend.Add(new EventAttendanceReport
+                    {
+                        Name = evt.Name,
+                        AttendanceCount = attendanceCount
+                    });
+                }
+
+                return attendanceTrend;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new Exception($"Database error: {dbEx.Message}", dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<IEnumerable<MonthlyEventsReport>> GetMonthlyEventsReport()
+        {
+            try
+            {
+                // Obtener la cantidad de eventos por mes
+                var monthlyEvents = await _context.Event
+                    .Where(e => e.Date.Year == DateTime.Now.Year)
+                    .GroupBy(e => e.Date.Month)
+                    .Select(group => new MonthlyEventsReport
+                    {
+                        Month = group.Key,
+                        EventsCount = group.Count()
+                    })
+                    .OrderBy(report => report.Month)
+                    .ToListAsync();
+
+                return monthlyEvents;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new Exception($"Database error: {dbEx.Message}", dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<MemberEventsCoveredReport> GetMemberWithMostEventsCovered()
+        {
+            // Agrupar eventos por miembro y contarlos
+            var memberEventCounts = await _context.Event
+                .GroupBy(e => e.IdMember)
+                .Select(group => new
+                {
+                    MemberId = group.Key,
+                    EventsCovered = group.Count()
+                })
+                .ToListAsync();
+
+            // Encontrar el miembro con la mayor cantidad de eventos cubiertos
+            var topMemberEventCount = memberEventCounts.OrderByDescending(m => m.EventsCovered).FirstOrDefault();
+
+            if (topMemberEventCount != null)
+            {
+                // Obtener la información del miembro
+                var topMember = await _context.Member
+                    .Where(m => m.Id == topMemberEventCount.MemberId)
+                    .Select(m => new MemberEventsCoveredReport
+                    {
+                        MemberName = $"{m.FirstName} {m.LastName}",
+                        EventsCovered = topMemberEventCount.EventsCovered
+                    })
+                    .FirstOrDefaultAsync();
+
+                return topMember;
+            }
+
+            return null;
+        }
+
     }
 }
