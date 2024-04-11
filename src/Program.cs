@@ -44,6 +44,8 @@ builder.Services.AddScoped<IAssociateService, AssociateService>();
 builder.Services.AddScoped<IAssociateRepository, AssociateRepository>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
