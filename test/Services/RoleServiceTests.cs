@@ -36,16 +36,16 @@ namespace test.Services
                 new Role { Id = 2,Description = "Member"}
             };
 
-            _repositoryMock.Setup(repo => repo.GetAll(1,10)).ReturnsAsync(rolesMock);
+            _repositoryMock.Setup(repo => repo.GetAll(1, 10, "", "")).ReturnsAsync(rolesMock);
 
             //Act
-            var result = await _service.GetAll(1, 10).ConfigureAwait(false);
+            var result = await _service.GetAll(1, 10, "", "").ConfigureAwait(false);
 
             //Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<IEnumerable<Role>>();
             result.Should().BeEquivalentTo(rolesMock);
-            _repositoryMock.Verify(repo => repo.GetAll(1, 10), Times.Once);
+            _repositoryMock.Verify(repo => repo.GetAll(1, 10, "", ""), Times.Once);
         }
 
 
@@ -53,16 +53,16 @@ namespace test.Services
         public async Task GetAll_ShouldReturnEmpty_WhenNoDataFound()
         {
             // Arrange
-            _repositoryMock.Setup(repo => repo.GetAll(1, 10)).ReturnsAsync(Enumerable.Empty<Role>());
+            _repositoryMock.Setup(repo => repo.GetAll(1, 10, "", "")).ReturnsAsync(Enumerable.Empty<Role>());
 
             // Act
-            var result = await _service.GetAll(1, 10).ConfigureAwait(false);
+            var result = await _service.GetAll(1, 10, "", "").ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<IEnumerable<Role>>();
             result.Should().BeEmpty();
-            _repositoryMock.Verify(repo => repo.GetAll(1, 10), Times.Once);
+            _repositoryMock.Verify(repo => repo.GetAll(1, 10, "", ""), Times.Once);
         }
 
 
@@ -202,16 +202,16 @@ namespace test.Services
             
         };
 
-            _repositoryMock.Setup(repo => repo.Update(eventMock)).ReturnsAsync(response);
+            _repositoryMock.Setup(repo => repo.Update(eventMock.Id, eventMock)).ReturnsAsync(response);
 
             // Act
-            var result = await _service.Update(eventMock).ConfigureAwait(false);
+            var result = await _service.Update(eventMock.Id, eventMock).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Role>();
             result.Should().BeEquivalentTo(response);
-            _repositoryMock.Verify(repo => repo.Update(eventMock), Times.Once);
+            _repositoryMock.Verify(repo => repo.Update(eventMock.Id, eventMock), Times.Once);
         }
 
         [Fact]
@@ -223,14 +223,14 @@ namespace test.Services
                 Description = "Prueba"
             };
 
-            _repositoryMock.Setup(repo => repo.Update(eventMock)).ReturnsAsync((Role)null);
+            _repositoryMock.Setup(repo => repo.Update(eventMock.Id, eventMock)).ReturnsAsync((Role)null);
 
             // Act
-            var result = await _service.Update(eventMock).ConfigureAwait(false);
+            var result = await _service.Update(eventMock.Id, eventMock).ConfigureAwait(false);
 
             // Assert
             result.Should().BeNull();
-            _repositoryMock.Verify(repo => repo.Update(eventMock), Times.Once);
+            _repositoryMock.Verify(repo => repo.Update(eventMock.Id, eventMock), Times.Once);
         }
     }
 }

@@ -33,32 +33,32 @@ namespace test.Services
                 new Event { Id = 3, IdMember = 2, Name = "Reunión porqué amo a mi esposita", Description = "Reunión recapacitativa", Date = DateOnly.Parse("January 15, 2023", CultureInfo.InvariantCulture), Time = new TimeOnly(14, 00, 11), Place = "Sala de juntas" }
                 };
 
-            _repositoryMock.Setup(repo => repo.GetAll(1, 10)).ReturnsAsync(eventsMock);
+            _repositoryMock.Setup(repo => repo.GetAll(1, 10, "", "")).ReturnsAsync(eventsMock);
 
             // Act
-            var result = await _service.GetAll(1, 10).ConfigureAwait(false);
+            var result = await _service.GetAll(1, 10, "", "").ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<IEnumerable<Event>>();
             result.Should().BeEquivalentTo(eventsMock);
-            _repositoryMock.Verify(repo => repo.GetAll(1, 10), Times.Once);
+            _repositoryMock.Verify(repo => repo.GetAll(1, 10, "", ""), Times.Once);
         }
 
         [Fact]
         public async Task GetAll_ShouldReturnEmpty_WhenNoDataFound()
         {
             // Arrange
-            _repositoryMock.Setup(repo => repo.GetAll(1, 10)).ReturnsAsync(Enumerable.Empty<Event>());
+            _repositoryMock.Setup(repo => repo.GetAll(1, 10, "", "")).ReturnsAsync(Enumerable.Empty<Event>());
 
             // Act
-            var result = await _service.GetAll(1, 10).ConfigureAwait(false);
+            var result = await _service.GetAll(1, 10, "", "").ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<IEnumerable<Event>>();
             result.Should().BeEmpty();
-            _repositoryMock.Verify(repo => repo.GetAll(1, 10), Times.Once);
+            _repositoryMock.Verify(repo => repo.GetAll(1, 10, "", ""), Times.Once);
         }
 
         // Test Get By ID
@@ -233,16 +233,16 @@ namespace test.Services
                 Time = new TimeOnly()
             };
 
-            _repositoryMock.Setup(repo => repo.Update(eventMock)).ReturnsAsync(response);
+            _repositoryMock.Setup(repo => repo.Update(eventMock.Id ,eventMock)).ReturnsAsync(response);
 
             // Act
-            var result = await _service.Update(eventMock).ConfigureAwait(false);
+            var result = await _service.Update(eventMock.Id, eventMock).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Event>();
             result.Should().BeEquivalentTo(response);
-            _repositoryMock.Verify(repo => repo.Update(eventMock), Times.Once);
+            _repositoryMock.Verify(repo => repo.Update(eventMock.Id, eventMock), Times.Once);
         }
 
         [Fact]
@@ -259,14 +259,14 @@ namespace test.Services
                 Time = new TimeOnly()
             };
 
-            _repositoryMock.Setup(repo => repo.Update(eventMock)).ReturnsAsync((Event)null);
+            _repositoryMock.Setup(repo => repo.Update(eventMock.Id, eventMock)).ReturnsAsync((Event)null);
 
             // Act
-            var result = await _service.Update(eventMock).ConfigureAwait(false);
+            var result = await _service.Update(eventMock.Id, eventMock).ConfigureAwait(false);
 
             // Assert
             result.Should().BeNull();
-            _repositoryMock.Verify(repo => repo.Update(eventMock), Times.Once);
+            _repositoryMock.Verify(repo => repo.Update(eventMock.Id, eventMock), Times.Once);
         }
     }
 }
