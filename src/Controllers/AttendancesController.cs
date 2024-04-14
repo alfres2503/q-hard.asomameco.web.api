@@ -21,43 +21,15 @@ namespace src.Controllers
         // 204 is the correct status code for when there is no data 
         // to return 204, use NoContent() instead of Ok(null)
 
-        [HttpGet]
-        public async Task<ActionResult<PagedResult<Attendance>>> GetAttendances(int pageNumber = 1, int pageSize = 10, string searchTerm = null, string orderBy = null)
-        {
-            try
-            {
-                var list = await _attendanceService.GetAll(pageNumber, pageSize, searchTerm, orderBy).ConfigureAwait(false);
-
-                if(list == null)
-                    return NoContent();
-
-                var total = await _attendanceService.GetCount(searchTerm).ConfigureAwait(false);
-                var totalPages = (int)Math.Ceiling((double)total / (double)pageSize);
-
-                var result = new PagedResult<Attendance>
-                {
-                    List = list,
-                    TotalPages = totalPages,
-                    TotalRecords = total
-                };
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
         [HttpGet("event/{id}")]
-        public async Task<ActionResult<Attendance>> GetAttendanceByIdEvent(int id, int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<Attendance>> GetAttendanceByIdEvent(int id, int pageNumber = 1, int pageSize = 10, string searchTerm = null, string orderBy = null)
         {
             try
             {
                 if (id <= 0)
                     return BadRequest(new { success = false, status = 400, message = "Invalid Event ID" });
 
-                var response = await _attendanceService.GetByIdEvent(id,pageNumber,pageSize).ConfigureAwait(false);
+                var response = await _attendanceService.GetByIdEvent(id,pageNumber,pageSize,searchTerm, orderBy).ConfigureAwait(false);
 
                 return response != null ? Ok(response) : NoContent();
             }
@@ -67,33 +39,14 @@ namespace src.Controllers
             }
         }
 
-        [HttpGet("associate/{id}")]
-        public async Task<ActionResult<Attendance>> GetAttendanceByIdAssociate(int id, int pageNumber = 1, int pageSize = 10)
-        {
-            try
-            {
-                if (id <= 0)
-                    return BadRequest(new { success = false, status = 400, message = "Invalid Associate ID" });
-
-                var response = await _attendanceService.GetByIdAssociate(id, pageNumber, pageSize).ConfigureAwait(false);
-
-                return response != null ? Ok(response) : NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [HttpGet("event-associate/{idEvent}/{idAssociate}")]
-        public async Task<ActionResult<Attendance>> GetByIdEventIdAssociate(int idEvent, int idAssociate)
+        private async Task<ActionResult<Attendance>> GetByIdEventIdAssociate(int idEvent, int idAssociate)
         {
             try
             {
                 if (idEvent <= 0 && idAssociate <= 0)
                     return BadRequest(new { success = false, status = 400, message = "Invalid Associate ID" });
 
-                var response = await _attendanceService.GetByIdEventIdAssociate(idEvent, idAssociate).ConfigureAwait(false);
+                var response = await _attendanceService.GetByIdEventIdAssociate(idEvent,idAssociate).ConfigureAwait(false);
 
                 return response != null ? Ok(response) : NoContent();
             }
@@ -102,24 +55,6 @@ namespace src.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
-        //private async Task<ActionResult<Attendance>> GetByIdEventIdAssociate(int idEvent, int idAssociate)
-        //{
-        //    try
-        //    {
-        //        if (idEvent <= 0 && idAssociate <= 0)
-        //            return BadRequest(new { success = false, status = 400, message = "Invalid Associate ID" });
-
-        //        var response = await _attendanceService.GetByIdEventIdAssociate(idEvent,idAssociate).ConfigureAwait(false);
-
-        //        return response != null ? Ok(response) : NoContent();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
-
 
         [HttpPost]
         public async Task<ActionResult<Attendance>> CreateAttendance([FromBody] Attendance attendance)

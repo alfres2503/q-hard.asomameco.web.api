@@ -17,43 +17,51 @@ namespace src.Repository
         }
 
 
-        public async Task<IEnumerable<Attendance>> GetByIdEvent(int id, int pageNumber, int pageSize)
+        public async Task<IEnumerable<Attendance>> GetByIdEvent(int id, int pageNumber, int pageSize, string searchTerm, string orderBy)
         {
             try
             {
-                return await _context.Attendance
-                    .Where(a => a.IdEvent == id)
-                    .OrderBy(a => a.IdEvent)
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .Select(a => new Attendance
-                    {
-                        IdAssociate = a.IdAssociate,
-                        IdEvent = a.IdEvent,
-                        ArrivalTime = a.ArrivalTime,
-                        isConfirmed = a.isConfirmed,
-                        Associate = a.Associate,
-                        Event = a.Event,
-                    })
-                    .ToListAsync();
-            }
-            catch (DbUpdateException dbEx)
-            {
-                throw new Exception($"Database error: {dbEx.Message}", dbEx);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"An error occurred: {ex.Message}", ex);
-            }
-        }
+                var query = _context.Attendance.AsQueryable();
 
-        public async Task<IEnumerable<Attendance>> GetByIdAssociate(int id, int pageNumber, int pageSize)
-        {
-            try
-            {
+                // if there is a search term, filter the query
+                if (!string.IsNullOrEmpty(searchTerm))
+                    query = query.Where(cs => cs.Event.Name.Contains(searchTerm) || cs.Associate.Name.Contains(searchTerm));
+
+                // if there is an orderBy parameter, order the query
+                switch (orderBy)
+                {
+                    case "id":
+                        query = query.OrderBy(a => a.IdEvent);
+                        break;
+                    case "id_desc":
+                        query = query.OrderByDescending(a => a.IdEvent);
+                        break;
+                    case "name":
+                        query = query.OrderBy(a => a.Event.Name);
+                        break;
+                    case "name_desc":
+                        query = query.OrderByDescending(a => a.Event.Name);
+                        break;
+                    case "role":
+                        query = query.OrderBy(a => a.IdAssociate);
+                        break;
+                    case "role_desc":
+                        query = query.OrderByDescending(cs => cs.IdAssociate);
+                        break;
+                    case "active":
+                        query = query.OrderBy(a => a.isConfirmed);
+                        break;
+                    case "active_desc":
+                        query = query.OrderByDescending(a => a.isConfirmed);
+                        break;
+                    default:
+                        query = query.OrderBy(a => a.IdEvent);
+                        break;
+                }
+
                 return await _context.Attendance
-                    .Where(a => a.IdAssociate == id)
-                    .OrderBy(a => a.IdAssociate)
+                    .Where(a => a.IdEvent == id && a.isConfirmed)
+                    .OrderBy(a => a.IdEvent)
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .Select(a => new Attendance
@@ -125,76 +133,6 @@ namespace src.Repository
             }
         }
 
-        // async method to get all Attendance
-
-        public async Task<IEnumerable<Attendance>> GetAll(int pageNumber, int pageSize, string searchTerm, string orderBy)
-        {
-
-            try
-            {
-                var query = _context.Attendance.AsQueryable();
-
-                // if there is a search term, filter the query
-                if (!string.IsNullOrEmpty(searchTerm))
-                    query = query.Where(cs => cs.Event.Name.Contains(searchTerm) || cs.Associate.Name.Contains(searchTerm));
-
-                // if there is an orderBy parameter, order the query
-                switch (orderBy)
-                {
-                    case "id":
-                        query = query.OrderBy(a => a.IdEvent);
-                        break;
-                    case "id_desc":
-                        query = query.OrderByDescending(a => a.IdEvent);
-                        break;
-                    case "name":
-                        query = query.OrderBy(a => a.Event.Name);
-                        break;
-                    case "name_desc":
-                        query = query.OrderByDescending(a => a.Event.Name);
-                        break;
-                    case "role":
-                        query = query.OrderBy(a => a.IdAssociate);
-                        break;
-                    case "role_desc":
-                        query = query.OrderByDescending(cs => cs.IdAssociate);
-                        break;
-                    case "active":
-                        query = query.OrderBy(a => a.isConfirmed);
-                        break;
-                    case "active_desc":
-                        query = query.OrderByDescending(a => a.isConfirmed);
-                        break;
-                    default:
-                        query = query.OrderBy(a => a.IdEvent);
-                        break;
-                }
-
-                return await query
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .Select(a => new Attendance
-                    {
-                        IdAssociate = a.IdAssociate,
-                        IdEvent = a.IdEvent,
-                        ArrivalTime = a.ArrivalTime,
-                        isConfirmed = a.isConfirmed,
-                        Associate = a.Associate,
-                        Event = a.Event,
-                    })
-                    .ToListAsync();
-
-            }
-            catch (DbUpdateException dbEx)
-            {
-                throw new Exception($"Database error: {dbEx.Message}", dbEx);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"An error occurred: {ex.Message}", ex);
-            }
-        }
-
         public async Task<int> GetCount(string searchTerm)
         {
             try
@@ -219,23 +157,5 @@ namespace src.Repository
             }
         }
 
-        public async Task<Attendance> ChangeState(int idEvent, int idAssociate)
-        {
-            try
-            {
-                _context.Attendance.Find(idEvent, idAssociate).isConfirmed = !_context.Attendance.Find(idEvent, idAssociate).isConfirmed;
-                await _context.SaveChangesAsync();
-                return await _context.Attendance.FindAsync(idEvent, idAssociate);
-            }
-            catch (DbUpdateException dbEx)
-            {
-                throw new Exception($"Database error: {dbEx.Message}", dbEx);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"An error occurred: {ex.Message}", ex);
-            }
-
-        }
     }
 }
