@@ -39,7 +39,7 @@ namespace test.Controllers
                 new Event { Id = 3, IdMember = 2, Name = "Reunión porqué amo a mi esposita", Description = "Reunión recapacitativa", Date = DateOnly.Parse("January 15, 2023", CultureInfo.InvariantCulture), Time = new TimeOnly(14, 00, 11), Place = "Sala de juntas" }
                 };
 
-            _serviceMock.Setup(service => service.GetAll(1, 10)).ReturnsAsync(membersMock);
+            _serviceMock.Setup(service => service.GetAll(1, 10, "", "")).ReturnsAsync(membersMock);
 
             // Act
             var result = await _controller.GetEvents().ConfigureAwait(false);
@@ -52,14 +52,14 @@ namespace test.Controllers
                 .Should()
                 .NotBeNull()
                 .And.BeOfType(membersMock.GetType());
-            _serviceMock.Verify(service => service.GetAll(1, 10), Times.Once);
+            _serviceMock.Verify(service => service.GetAll(1, 10, "", ""), Times.Once);
         }
 
         [Fact]
         public async Task GetAll_ShouldReturnNoContent_WhenNoDataFound()
         {
             // Arrange
-            _serviceMock.Setup(service => service.GetAll(1, 10)).ReturnsAsync((List<Event>)null);
+            _serviceMock.Setup(service => service.GetAll(1, 10, "", "")).ReturnsAsync((List<Event>)null);
 
             // Act
             var result = await _controller.GetEvents().ConfigureAwait(false);
@@ -67,14 +67,14 @@ namespace test.Controllers
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<NoContentResult>();
-            _serviceMock.Verify(service => service.GetAll(1, 10), Times.Once);
+            _serviceMock.Verify(service => service.GetAll(1, 10, "", ""), Times.Once);
         }
 
         [Fact]
         public async Task GetAll_ShouldReturnInternalServerError_WhenExceptionThrown()
         {
             // Arrange
-            _serviceMock.Setup(service => service.GetAll(1, 10)).ThrowsAsync(new Exception("Some error"));
+            _serviceMock.Setup(service => service.GetAll(1, 10, "", "")).ThrowsAsync(new Exception("Some error"));
 
             // Act
             var result = await _controller.GetEvents().ConfigureAwait(false);
@@ -83,7 +83,7 @@ namespace test.Controllers
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<ObjectResult>();
             result.Result.As<ObjectResult>().StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
-            _serviceMock.Verify(service => service.GetAll(1, 10), Times.Once);
+            _serviceMock.Verify(service => service.GetAll(1, 10, "", ""), Times.Once);
         }
 
         // Test Get By ID
