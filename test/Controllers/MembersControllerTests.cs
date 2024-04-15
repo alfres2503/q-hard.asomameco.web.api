@@ -287,7 +287,7 @@ namespace test.Controllers
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<BadRequestObjectResult>();
-            _serviceMock.Verify(service => service.Update(request.Id, request), Times.Never);
+            _serviceMock.Verify(service => service.Update(It.IsAny<int>(), It.IsAny<Member>()), Times.Never);
         }
 
         [Fact]

@@ -282,12 +282,12 @@ namespace test.Controllers
             CateringService request = null;
 
             // Act
-            var result = await _controller.UpdateCateringService(request.Id, request).ConfigureAwait(false);
+            var result = await _controller.UpdateCateringService(1, request).ConfigureAwait(false);
 
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<BadRequestObjectResult>();
-            _serviceMock.Verify(service => service.Update(request.Id, request), Times.Never);
+            _serviceMock.Verify(service => service.Update(It.IsAny<int>(), It.IsAny<CateringService>()), Times.Never);
         }
 
         [Fact]
